@@ -77,11 +77,11 @@ function onReset() {
 //function executes when Download button is pressed
 function onDownload(){
   log('#logs', "Click the download button");
-  if(detector && detector.isRunning){
+  //if(detector && detector.isRunning){
         prepCSV();
 //	detector.download();
 
-  }
+  //}
 
 };
 
