@@ -55,7 +55,7 @@ function onStart() {
 function onStop() {
   log('#logs', "Clicked the stop button");
   if (detector && detector.isRunning) {
-	prepCSV();
+//	prepCSV();
     detector.removeEventListener();
     detector.stop();
 
@@ -73,6 +73,18 @@ function onReset() {
     $('#results').html("");
   }
 };
+
+//function executes when Download button is pressed
+function onDownload(){
+  log('#logs', "Click the download button");
+  if(detector && detector.isRunning){
+        prepCSV();
+//	detector.download();
+
+  }
+
+};
+
 
 //Add a callback to notify when camera access is allowed
 detector.addEventListener("onWebcamConnectSuccess", function() {
@@ -259,7 +271,7 @@ function exportCSVFile(headers, items, fileTitle) {
             var url = URL.createObjectURL(blob);
             link.setAttribute("href", url);
             link.setAttribute("download", exportedFilename);
-            link.style.visibility = 'hidden';
+            link.style.visibility = 'visible';
             document.body.appendChild(link);
             link.click();
             document.body.removeChild(link);
