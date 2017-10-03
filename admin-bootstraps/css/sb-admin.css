@@ -31,7 +31,7 @@ body.fixed-nav {
   height: 50px;
   text-align: center;
   color: white;
-  background: rgba(52, 58, 64, 0.5);
+  background: rgba(40, 40, 55, 0.5);
   line-height: 45px; }
   .scroll-to-top:focus, .scroll-to-top:hover {
     color: white; }
@@ -60,7 +60,7 @@ body.fixed-nav {
   #mainNav .navbar-collapse .navbar-sidenav .nav-link-collapse:after {
     float: right;
     content: '\f107';
-    font-family: 'FontAwesome'; }
+    font-family:'Catamaran', 'Helvetica', 'Arial', 'sans-serif'; }
   #mainNav .navbar-collapse .navbar-sidenav .nav-link-collapse.collapsed:after {
     content: '\f105'; }
   #mainNav .navbar-collapse .navbar-sidenav .sidenav-second-level,
@@ -88,7 +88,7 @@ body.fixed-nav {
       width: auto;
       content: '\f105';
       border: none;
-      font-family: 'FontAwesome'; }
+      font-family: 'Lato', 'Helvetica', 'Arial', 'sans-serif';}
     #mainNav .navbar-collapse .navbar-nav > .nav-item.dropdown > .nav-link .indicator {
       position: absolute;
       top: 5px;
@@ -168,7 +168,7 @@ body.fixed-nav {
         padding: 1em; } }
 
 #mainNav.fixed-top.navbar-dark .sidenav-toggler {
-  background-color: #212529; }
+  background-color: #adb5bd; }
   #mainNav.fixed-top.navbar-dark .sidenav-toggler a i {
     color: #adb5bd; }
 
@@ -249,7 +249,7 @@ body.sidenav-toggled .navbar-sidenav-tooltip.show {
 
 #mainNav.navbar-dark .navbar-collapse .navbar-sidenav > .nav-item .sidenav-second-level > li > a,
 #mainNav.navbar-dark .navbar-collapse .navbar-sidenav > .nav-item .sidenav-third-level > li > a {
-  color: #868e96; }
+  color: #adb5bd; }
   #mainNav.navbar-dark .navbar-collapse .navbar-sidenav > .nav-item .sidenav-second-level > li > a:focus, #mainNav.navbar-dark .navbar-collapse .navbar-sidenav > .nav-item .sidenav-second-level > li > a:hover,
   #mainNav.navbar-dark .navbar-collapse .navbar-sidenav > .nav-item .sidenav-third-level > li > a:focus,
   #mainNav.navbar-dark .navbar-collapse .navbar-sidenav > .nav-item .sidenav-third-level > li > a:hover {
@@ -260,15 +260,15 @@ body.sidenav-toggled .navbar-sidenav-tooltip.show {
 
 @media (min-width: 992px) {
   #mainNav.navbar-dark .navbar-collapse .navbar-sidenav {
-    background: #343a40; }
+    background: #adb5bd; }
     #mainNav.navbar-dark .navbar-collapse .navbar-sidenav li.active a {
       color: white !important;
-      background-color: #495057; }
+      background-color: #dae9f4; }
       #mainNav.navbar-dark .navbar-collapse .navbar-sidenav li.active a:focus, #mainNav.navbar-dark .navbar-collapse .navbar-sidenav li.active a:hover {
         color: white; }
     #mainNav.navbar-dark .navbar-collapse .navbar-sidenav > .nav-item .sidenav-second-level,
     #mainNav.navbar-dark .navbar-collapse .navbar-sidenav > .nav-item .sidenav-third-level {
-      background: #343a40; } }
+      background: #282c37; } }
 
 #mainNav.navbar-light .navbar-collapse .navbar-sidenav .nav-link-collapse:after {
   color: rgba(0, 0, 0, 0.5); }
