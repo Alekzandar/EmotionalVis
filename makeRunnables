@@ -1,0 +1,12 @@
+#!/bin/bash
+
+#File to chmod all .html files 
+#Takes in directory name
+
+pushd ${1} >/dev/null
+
+arrOfFiles=`find *.html`
+for file in $arrayOfFiles;
+	do
+		chmod 755 $file >/dev/null
+done
