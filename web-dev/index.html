@@ -7,6 +7,9 @@
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
     <meta name="description" content="">
     <meta name="author" content="">
+    <meta name="google-signin-scope" content="profile email">
+    <meta name="google-signin-client_id" content="512975312550-htjcuptc8qq7c9d93vav65864ts3vaae.apps.googleusercontent.com">
+    <script src="https://apis.google.com/js/platform.js" async defer></script>
 
     <title>EmotiVis</title>
 
@@ -33,7 +36,7 @@
     <!-- Navigation -->
     <nav class="navbar navbar-expand-lg navbar-light fixed-top" id="mainNav">
       <div class="container">
-        <a class="navbar-brand js-scroll-trigger" href="#page-top">EmotiVis</a>
+        <a class="navbar-brand js-scroll-trigger" href="#page-top" style="color:#dae9f4;">EmotiVis</a>
         <button class="navbar-toggler navbar-toggler-right" type="button" data-toggle="collapse" data-target="#navbarResponsive" aria-controls="navbarResponsive" aria-expanded="false" aria-label="Toggle navigation">
           Navigate
           <i class="fa fa-bars"></i>
@@ -41,14 +44,13 @@
         <div class="collapse navbar-collapse" id="navbarResponsive">
           <ul class="navbar-nav ml-auto">
             <li class="nav-item">
-              <a class="nav-link js-scroll-trigger" href="#download">Login</a>
+              <a class="nav-link js-scroll-trigger" href="#login">Login</a>
             </li>
             <li class="nav-item">
               <a class="nav-link js-scroll-trigger" href="#aboutus">About Us</a>
             <li class="nav-item">
-              <a class="nav-link js-scroll-trigger" href="#contact">Dashboard</a>
+              <a class="nav-link js-scroll-trigger" href="dashboard.html">Dashboard</a>
             </li>
-            
             </li>
             <li class="nav-item">
               <a class="nav-link js-scroll-trigger" href="#contact">Contact</a>
@@ -66,8 +68,25 @@
         <div class="row h-100">
           <div class="col-lg-7 my-auto">
             <div class="header-content mx-auto">
-              <h1 class="mb-5">EmotiVis is a cool new way to visualize how users are interacting with your visualizations! </h1>
-              <a href="#download" class="btn btn-outline btn-xl js-scroll-trigger">Start Now for Free!</a>
+              <h1 class="mb-5">EmotiVis is a cool new way to visualize how users interact with your visualizations! </h1>
+              
+              <div class="g-signin2" data-onsuccess="onSignIn" data-theme="dark"></div>
+              <script>
+                function onSignIn(googleUser) {
+                  // Useful data for your client-side scripts:
+                  var profile = googleUser.getBasicProfile();
+                  console.log("ID: " + profile.getId()); // Don't send this directly to your server!
+                  console.log('Full Name: ' + profile.getName());
+                  console.log('Given Name: ' + profile.getGivenName());
+                  console.log('Family Name: ' + profile.getFamilyName());
+                  console.log("Image URL: " + profile.getImageUrl());
+                  console.log("Email: " + profile.getEmail());
+                  // The ID token you need to pass to your backend:
+                  var id_token = googleUser.getAuthResponse().id_token;
+                  console.log("ID Token: " + id_token);
+                };
+              </script>
+
             </div>
           </div>
           <div class="col-lg-5 my-auto">
@@ -102,15 +121,13 @@
                 <div class="col-lg-6">
                   <div class="feature-item">
                     <img src="img/steph.jpg" alt="Steph pic" style="width:400px;height:300px;">
-                    <h3>Stephanie Garboski</h3>
-                    <p class="text-muted">Stephanie Garboski is a senior at Bucknell University, majoring in both Computer Science and Comparative Humanities. She is currently a Teacher's Assistant for the Comparative Humanities Department, the events planner for the Chi Omega Sorority on campus, and is also working on an Honors Thesis within the Comparative Humanities department. Her interests vary widely, from creative writing to web application security, and she is hoping to eventually retire early from her career in web security to pursue a career in fiction writing from the safety and comfort of her farm in rural New England.</p>
+                    <p class="text-muted"><b>Stephanie Garboski</b> is a senior at Bucknell University, majoring in both Computer Science and Comparative Humanities. She is currently a Teacher's Assistant for the Comparative Humanities Department, the events planner for the Chi Omega Sorority on campus, and is also working on an Honors Thesis within the Comparative Humanities department. Her interests vary widely, from creative writing to web application security, and she is hoping to eventually retire early from her career in web security to pursue a career in fiction writing from the safety and comfort of her farm in rural New England.</p>
                   </div>
                 </div>
                 <div class="col-lg-6">
                   <div class="feature-item">
                     <img src="img/nat.jpg" alt="Natalie pic" style="width:300px;height:300px;">
-                    <h3>Natalie Altman</h3>
-                    <p class="text-muted">Natalie Altman is a senior pursuing her BA in Computer Science with a minor in Women and Gender Studies at Bucknell University. She is also the Executive Vice President for the Theta Iota chapter of Alpha Delta Pi, and a student monitor at the Bucknell University Student Calling Program. After graduation she is hoping to combine her roots of being raised in New York City with her fascination in fashion, design and programming.</p>
+                    <p class="text-muted"><b>Natalie Altman</b> is a senior pursuing her BA in Computer Science with a minor in Women and Gender Studies at Bucknell University. She is also the Executive Vice President for the Theta Iota chapter of Alpha Delta Pi, and a student monitor at the Bucknell University Student Calling Program. After graduation she is hoping to combine her roots of being raised in New York City with her fascination in fashion, design and programming.</p>
                   </div>
                 </div>
               </div>
@@ -118,15 +135,13 @@
                 <div class="col-lg-6">
                   <div class="feature-item">
                     <img src="img/aleks.jpg" alt="Aleks pic" style="width:325px;height:500px;">
-                    <h3>Aleksandar Antonov</h3>
-                    <p class="text-muted">Aleksandar Antonov is a senior at Bucknell University pursuing a BS in Computer Science. With interests spanning Literature, Social Justice, ‘The Great Outdoors’, graphics, and security engineering.  Aleksandar aims to bring his skills in computer science to interface with paths intersecting with those interests. You’re likely to find Aleksandar whizzing around on his bike, tumbling through the woods, creating lists for whatever whimsy, and deliberating his future with his soon-to-be dog.</p>
+                    <p class="text-muted"><b>Aleksandar Antonov</b> is a senior at Bucknell University pursuing a BS in Computer Science. With interests spanning Literature, Social Justice, ‘The Great Outdoors’, graphics, and security engineering.  Aleksandar aims to bring his skills in computer science to interface with paths intersecting with those interests. You’re likely to find Aleksandar whizzing around on his bike, tumbling through the woods, creating lists for whatever whimsy, and deliberating his future with his soon-to-be dog.</p>
                   </div>
                 </div>
                 <div class="col-lg-6">
                   <div class="feature-item">
                     <img src="img/danny.png" alt="Danny pic" style="width:300px;height:500px;">
-                    <h3>Daniel Toback</h3>
-                    <p class="text-muted">Danny Toback is a senior Computer Science major at Bucknell University, minoring in Spanish and Economics. He has strong interests in the areas of cyber security, game design, and software engineering, and has taken classes in Human Computer Interaction, Software Engineering, and Compiler Optimization. In 2017, he worked outside of Washington DC for a government defense contractor. In his spare time, he tries his best to impress his friends while playing the drums, embarrasses strangers in the art of video games over Xbox live, and complains about poor officiating in New York Yankees, Islanders, Giants and Knicks sporting events.</p>
+                    <p class="text-muted"><b>Danny Toback</b> is a senior Computer Science major at Bucknell University, minoring in Spanish and Economics. He has strong interests in the areas of cyber security, game design, and software engineering, and has taken classes in Human Computer Interaction, Software Engineering, and Compiler Optimization. In 2017, he worked outside of Washington DC for a government defense contractor. In his spare time, he tries his best to impress his friends while playing the drums, embarrasses strangers in the art of video games over Xbox live, and complains about poor officiating in New York Yankees, Islanders, Giants and Knicks sporting events.</p>
                   </div>
                 </div>
               </div>
