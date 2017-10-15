@@ -1,4 +1,4 @@
-#!/bin/bash
+#/bin/bash
 
 #File to chmod all .html files 
 #Takes in directory name
@@ -6,7 +6,20 @@
 pushd ${1} >/dev/null
 
 arrOfFiles=`find *.html`
+arrOfJS=`find *.js`
+arrOfCss=`find *.css`
 for file in $arrayOfFiles;
 	do
-		chmod 755 $file >/dev/null
+		chmod 755 -R $file >/dev/null
 done
+
+for fil in $arrOfJS;
+	do
+		chmod 755 -R $fil >/dev/null
+done
+
+for fi in $arrOfCss;
+	do
+		chmod 755 -R $fi >/dev/null
+done
+
