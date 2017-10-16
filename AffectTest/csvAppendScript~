@@ -1,0 +1,5 @@
+#!/bin/bash
+
+#Append data in csv file to another
+cat newLineChar.txt | (read; cat) >> affectivaTestData.csv
+cat ${1} >> affectivaTestData.csv
