@@ -64,7 +64,7 @@ ui <- fluidPage(
 # Define server logic to read selected file ----
 server <- function(input, output) {
   
-  output$contents <- renderTable({
+  output$contents <- renderPlot({
     
     # input$file1 will be NULL initially. After the user selects
     # and uploads a file, head of that data file by default,
