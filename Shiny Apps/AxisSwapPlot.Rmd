@@ -248,31 +248,6 @@ selectInput('colqr', label ='QR Color', choices=colors(),multiple=FALSE, selecti
                       )#fluidrow
                    ),
 
-conditionalPanel(
-                 condition = "input.showLoess" , 
-
-fluidRow(
-  column(12,hr()),
-  column (3, 
-                                              radioButtons("Loess", "Loess:",
-                                          c("Loess" = "Loess",
-                                            "Loess and SE" = "Loess and SE",
-                                            "None" = "None"),selected="None")
-          ),
-  column (3, 
-          sliderInput("loessens", "Loess Span:", min=0, max=1, value=c(0.75),step=0.05)
-             ),
-  column (3, checkboxInput('ignorecol', 'Ignore Color Above'),
-uiOutput("weight")
-           
-          ),
-    column (3,checkboxInput('ignoregroup', 'Ignore Group Above',value = TRUE),
-                selectInput('colloess', label ='Loess Color', choices=colors(),multiple=FALSE, selectize=TRUE,selected="black")
-                        )
-                      )#fluidrow
-                   )
-,
-
    conditionalPanel(
                  condition = "input.showMean" , 
                  
@@ -410,6 +385,7 @@ output$optionsmenu <-  renderUI({
                       column(4,checkboxInput('showLoess', 'Loess SE (Options ?)', value = TRUE)),
                       column(4,checkboxInput('showMean' , 'Mean CI (Options ?)', value = FALSE)),
                       
+                    
                       column(4,checkboxInput('showMedian','Median PIs (Options ?)', value = FALSE))
                       )
  })
@@ -884,84 +860,6 @@ p <- p +
 }
 ###### Mean section  END 
 
-###### Loess Section START
-if(!is.null(input$Loess) ){
-  if ( input$ignoregroup) {
-      if (!input$ignorecol) {
-      spanplot <- input$loessens
-      if (input$Loess=="Loess")
-        p <- p + geom_smooth(method="loess",size=1.5,se=F,span=spanplot,aes(group=NULL))
-      
-      if (input$Loess=="Loess and SE")
-        p <- p + geom_smooth(method="loess",size=1.5,se=T,span=spanplot,aes(group=NULL))
-      
-      if (input$Loess=="Loess"& input$weightin != 'None')
-        p <- p + geom_smooth(method="loess",size=1.5,se=F,span=spanplot,aes(group=NULL))+  
-        aes_string(weight=input$weightin)
-      
-      if (input$Loess=="Loess and SE"& input$weightin != 'None')
-        p <- p + geom_smooth(method="loess",size=1.5,se=T,span=spanplot,aes(group=NULL))+  
-        aes_string(weight=input$weightin)
-      }
-      if (input$ignorecol) {
-        spanplot <- input$loessens
-        colloeess <- input$colloess
-      if (input$Loess=="Loess")
-        p <- p + geom_smooth(method="loess",size=1.5,se=F,span=spanplot,col=colloeess,aes(group=NULL))
-      
-      if (input$Loess=="Loess and SE")
-        p <- p + geom_smooth(method="loess",size=1.5,se=T,span=spanplot,col=colloeess,aes(group=NULL))
-      
-      if (input$Loess=="Loess"& input$weightin != 'None')
-        p <- p + geom_smooth(method="loess",size=1.5,se=F,span=spanplot,col=colloeess,aes(group=NULL))+  
-        aes_string(weight=input$weightin)
-      
-      if (input$Loess=="Loess and SE"& input$weightin != 'None')
-        p <- p + geom_smooth(method="loess",size=1.5,se=T,span=spanplot,col=colloeess,aes(group=NULL))+  
-        aes_string(weight=input$weightin)
-              }
-      
-      }
-
-      if ( !input$ignoregroup) {
-      if (!input$ignorecol) {
-      spanplot <- input$loessens
-      if (input$Loess=="Loess")
-        p <- p + geom_smooth(method="loess",size=1.5,se=F,span=spanplot)
-      
-      if (input$Loess=="Loess and SE")
-        p <- p + geom_smooth(method="loess",size=1.5,se=T,span=spanplot)
-      
-      if (input$Loess=="Loess"& input$weightin != 'None')
-        p <- p + geom_smooth(method="loess",size=1.5,se=F,span=spanplot)+  
-        aes_string(weight=input$weightin)
-      
-      if (input$Loess=="Loess and SE"& input$weightin != 'None')
-        p <- p + geom_smooth(method="loess",size=1.5,se=T,span=spanplot)+  
-        aes_string(weight=input$weightin)
-      }
-      if (input$ignorecol) {
-        spanplot <- input$loessens
-        colloeess <- input$colloess
-      if (input$Loess=="Loess")
-        p <- p + geom_smooth(method="loess",size=1.5,se=F,span=spanplot,col=colloeess)
-      
-      if (input$Loess=="Loess and SE")
-        p <- p + geom_smooth(method="loess",size=1.5,se=T,span=spanplot,col=colloeess)
-      
-      if (input$Loess=="Loess"& input$weightin != 'None')
-        p <- p + geom_smooth(method="loess",size=1.5,se=F,span=spanplot,col=colloeess)+  
-        aes_string(weight=input$weightin)
-      
-      if (input$Loess=="Loess and SE"& input$weightin != 'None')
-        p <- p + geom_smooth(method="loess",size=1.5,se=T,span=spanplot,col=colloeess)+  
-        aes_string(weight=input$weightin)
-              }
-      
-      }
-
-###### Loess Section END
-}
       
 
 ###### Median PI section  START  
@@ -1138,10 +1036,6 @@ p <- p +
         
        }
 }
-
-
-
-###### Median PI section  END
 
 
 ###### RQSS SECTION START  
@@ -1383,10 +1277,7 @@ p
     output$plot <- renderPlot({
       plotObject()
     })
-    
-    
-    
-    
+ 
     output$plotinfo <- renderPrint({
     df<- recodedata2()  
       if (is.null(df)) return(NULL)
@@ -1401,13 +1292,6 @@ p
    h4("Clicked points")
      })
   
-        output$brushheader <-  renderUI({
-  df <-recodedata2()
-    if (is.null(df)) return(NULL)
-     h4("Brushed points")
-
-     })
-    
         output$plot_clickedpoints <- renderTable({
       # For base graphics, we need to specify columns, though for ggplot2,
       # it's usually not necessary.
