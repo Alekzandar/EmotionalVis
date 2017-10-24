@@ -25,28 +25,8 @@ ui <- fluidPage(
       # Input: Checkbox if file has header ----
       checkboxInput("header", "Header", TRUE),
       
-      # Input: Select separator ----
-      radioButtons("sep", "Separator",
-                   choices = c(Comma = ",",
-                               Semicolon = ";",
-                               Tab = "\t"),
-<<<<<<< HEAD
-                   selected = ","), 
       
       
-      
-      # Horizontal line ----
-      tags$hr()
-      
-=======
-                   selected = ","),
-      
-      # Input: Select quotes ----
-      radioButtons("quote", "Quote",
-                   choices = c(None = "",
-                               "Double Quote" = '"',
-                               "Single Quote" = "'"),
-                   selected = '"'),
       
       # Horizontal line ----
       tags$hr(),
@@ -56,7 +36,6 @@ ui <- fluidPage(
                    choices = c(Head = "head",
                                All = "all"),
                    selected = "head")
->>>>>>> a7cd829850fc2627723e025f3db065d71951c75e
       
     ),
     
@@ -74,11 +53,7 @@ ui <- fluidPage(
 # Define server logic to read selected file ----
 server <- function(input, output) {
   
-<<<<<<< HEAD
-  output$contents <- renderTable({
-=======
   output$contents <- renderPlot({
->>>>>>> a7cd829850fc2627723e025f3db065d71951c75e
     
     # input$file1 will be NULL initially. After the user selects
     # and uploads a file, head of that data file by default,
@@ -87,13 +62,7 @@ server <- function(input, output) {
     req(input$file1)
     
     df <- read.csv(input$file1$datapath,
-                   header = input$header,
-<<<<<<< HEAD
-                   sep = input$sep)
-    
-=======
-                   sep = input$sep,
-                   quote = input$quote)
+                   header = input$header)
     
     if(input$disp == "head") {
       return(head(df))
@@ -101,7 +70,6 @@ server <- function(input, output) {
     else {
       return(df)
     }
->>>>>>> a7cd829850fc2627723e025f3db065d71951c75e
     
   })
   
