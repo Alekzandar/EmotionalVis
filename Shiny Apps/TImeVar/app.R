@@ -1,10 +1,6 @@
 library(shiny)
 library(ggplot2)
-worldBank <- read.csv("../WDIDataDashboard.csv", sep = "\t", header = TRUE)
-codeToName <- c(
-  AG.LND.AGRI.ZS = "Agricultural land (% of land area)")
-nameToCode <- names(codeToName)
-names(nameToCode) <- codeToName
+
 #EmotiVis, Bucknell Senior Design
 
 # Define UI for data upload app ----

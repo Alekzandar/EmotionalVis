@@ -30,6 +30,7 @@ ui <- fluidPage(
                    choices = c(Comma = ",",
                                Semicolon = ";",
                                Tab = "\t"),
+<<<<<<< HEAD
                    selected = ","), 
       
       
@@ -37,6 +38,25 @@ ui <- fluidPage(
       # Horizontal line ----
       tags$hr()
       
+=======
+                   selected = ","),
+      
+      # Input: Select quotes ----
+      radioButtons("quote", "Quote",
+                   choices = c(None = "",
+                               "Double Quote" = '"',
+                               "Single Quote" = "'"),
+                   selected = '"'),
+      
+      # Horizontal line ----
+      tags$hr(),
+      
+      # Input: Select number of rows to display ----
+      radioButtons("disp", "Display",
+                   choices = c(Head = "head",
+                               All = "all"),
+                   selected = "head")
+>>>>>>> a7cd829850fc2627723e025f3db065d71951c75e
       
     ),
     
@@ -54,7 +74,11 @@ ui <- fluidPage(
 # Define server logic to read selected file ----
 server <- function(input, output) {
   
+<<<<<<< HEAD
   output$contents <- renderTable({
+=======
+  output$contents <- renderPlot({
+>>>>>>> a7cd829850fc2627723e025f3db065d71951c75e
     
     # input$file1 will be NULL initially. After the user selects
     # and uploads a file, head of that data file by default,
@@ -64,8 +88,20 @@ server <- function(input, output) {
     
     df <- read.csv(input$file1$datapath,
                    header = input$header,
+<<<<<<< HEAD
                    sep = input$sep)
     
+=======
+                   sep = input$sep,
+                   quote = input$quote)
+    
+    if(input$disp == "head") {
+      return(head(df))
+    }
+    else {
+      return(df)
+    }
+>>>>>>> a7cd829850fc2627723e025f3db065d71951c75e
     
   })
   
