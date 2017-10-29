@@ -76,7 +76,34 @@
   </div>
   <!-- END: ENTIRE SCREEN container -->
 
-<!-- Connect locally-hosted default affectiva camera script that makes everything work-->
+
+<!-- THE CODE BETWEEN THESE COMMENTS IS FOR FIREBASE-->
+<script src="https://www.gstatic.com/firebasejs/4.6.0/firebase.js"></script>
+<script>
+  // Initialize Firebase
+  var config = {
+    apiKey: "AIzaSyD2qqCsraEOXVt-cmJZHKN67tekb180NuI",
+    authDomain: "emotivis.firebaseapp.com",
+    databaseURL: "https://emotivis.firebaseio.com",
+    projectId: "emotivis",
+    storageBucket: "emotivis.appspot.com",
+    messagingSenderId: "75550783413"
+  };
+  firebase.initializeApp(config);
+</script>
+<!-- Leave out Storage -->
+<!-- <script src="https://www.gstatic.com/firebasejs/4.5.0/firebase-storage.js"></script> -->
+
+<script>
+  var config = {
+    // ...
+  };
+  firebase.initializeApp(config);
+</script>
+
+<!-- THE CODE BETWEEN THESE COMMENTS IS FOR FIREBASE-->
+<script src="https://cdn.firebase.com/js/client/2.4.2/firebase.js"></script>
+
 <script src="script.js"></script>
 </body>
 </html>
