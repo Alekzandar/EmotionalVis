@@ -1,0 +1,60 @@
+<div id="training">
+
+<h2>Instructions</h2>
+
+<p> In the next page, you will explore a visualization from a popular news website. Your task is to analyze how the content on this site has evolved over time. The image below shows how you can interact with the visualization.</p>
+<p><strong>>> Mouseover an individual line to bring up a more detailed chart.</strong></p>
+<div id="fd"><p><strong>>> To help you navigate the data, charts that you have already visited will change to be darker and thicker. </strong></p></div>
+
+        <h1>Analyzing trends in the economy</h1>
+
+        <div id="lead">
+            <p>Five years since the end of the recent Recession, the economy has finally regained the nine million jobs it lost. Each line below shows how the number of jobs has changed for a particular industry over the past 10 years. </p>
+
+
+<img src="" style="width:600px">
+
+<p>
+<button id="startTr" type="button">Start Exploring >></button>
+</p>
+
+
+</div>
+
+<style>
+  #fadeInstruction {
+    display: none;
+  }
+  #consentForm {
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    height: 200px;
+    overflow-y: scroll;
+    padding: 15px;
+  }
+</style>
+
+<script>
+(function() {
+
+  experimentr.hideNext();
+  experimentr.startTimer('training');
+
+  d3.select('#startTr').on('click', function() {
+    experimentr.endTimer('training');
+    experimentr.next();
+  });
+
+  //instructions
+  if(smData.condition == "nofade")
+  {
+	   d3.select('#training').select('#fd').style('display','none');
+  }
+
+  //training image
+  var imgsrc = "img/"+ smData.condition + ".gif";
+  d3.select('#training').select('img').attr('src',imgsrc);
+  
+
+}());
+</script>
