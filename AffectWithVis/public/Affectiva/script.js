@@ -1,3 +1,5 @@
+console.log("HI")
+
 //python -m SimpleHTTPServer
 
 // --unsafely-treat-insecure-origin-as-secure="http://eg.bucknell.edu/~drt008/EmotionalVis/AffectivaSkeleton/"
@@ -23,6 +25,9 @@ var emojis = [];
 var times = [];
 
 
+//instance of Firebase
+//var database = firebase.database();
+//var database = new Firebase('https://emotivis.firebaseio.com');
 
 //Enable detection of all Expressions, Emotions and Emojis classifiers.
 detector.detectAllEmotions();
@@ -227,10 +232,7 @@ function prepCSV(){
 		time: "Time"
     
 	};*/
-	
-	var fileTitle = "affecttest"; // or 'my-unique-title'
-
-	
+	var fileTitle = "affecttest"; // or 'my-unique-title'	
 	//Format for CSV
 	emotFormatted = convertToCSV(emotions);
 	timeFormatted = timeConvertToCSV(times);
@@ -300,3 +302,12 @@ function drawFeaturePoints(img, featurePoints) {
 
   }
 }
+
+//Firebase Code
+//function writeToDatabase(){
+//	myData = convertToCsv();
+//	database.push({fieldName:'csvEmotiData', text:message});
+//}
+
+
+
