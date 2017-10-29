@@ -26,7 +26,7 @@ var times = [];
 
 
 //instance of Firebase
-var database = firebase.database();
+//var database = firebase.database();
 //var database = new Firebase('https://emotivis.firebaseio.com');
 
 //Enable detection of all Expressions, Emotions and Emojis classifiers.
@@ -304,10 +304,10 @@ function drawFeaturePoints(img, featurePoints) {
 }
 
 //Firebase Code
-function writeToDatabase(){
-	myData = convertToCsv();
-	database.push({fieldName:'csvEmotiData', text:message});
-}
+//function writeToDatabase(){
+//	myData = convertToCsv();
+//	database.push({fieldName:'csvEmotiData', text:message});
+//}
 
 
 
