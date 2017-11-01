@@ -180,7 +180,7 @@ function convertToCSV(objArray) {
             }
         }
 
-        str += line + '\r\n';
+        str += times[i].toFixed(0) + ',' + line + '\r\n';
     }
 
     return str;
@@ -212,7 +212,7 @@ function timeConvertToCSV(objArray) {
 function prepCSV(){
 	
 	//{"joy":0,"sadness":0,"disgust":0,"contempt":0,"anger":0,"fear":0,"surprise":0,"valence":0,"engagement":0},
-    var headers = "Joy, Sadness, Disgust, Contempt, Anger, Fear, Surprise, Valence, Engagement, Time \r\n";
+    var headers = "Time, Joy, Sadness, Disgust, Contempt, Anger, Fear, Surprise, Valence, Engagement \r\n";
     
     	/*}
     	joy: "Joy",
@@ -237,13 +237,12 @@ function prepCSV(){
 	//var dataArr = new Array(emotions, times);
 	
 	
-	dataFormatted = emotFormatted + timeFormatted;
+	dataFormatted = emotFormatted;// + timeFormatted;
 	//log('#logs', "data:"+ dataFormatted);
 	
 	exportCSVFile( headers, dataFormatted, fileTitle); 
 	// call the exportCSVFile() function to process the JSON and trigger the download
 	
-
 }
 
 

@@ -8,6 +8,7 @@
 <script src="components/d3js/d3.v3.min.js"></script>
 <script src="experimentr.js"></script>
 
+
 <!-- Libs -->
 <link rel="stylesheet" href="css/bootstrap.min.css">
 <link rel="stylesheet" href="css/style.css">
@@ -23,16 +24,25 @@
 <!-- import jQuery -->
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
 
+<!--import Affectiva javascript support-->
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.min.js"></script>
+<script src="https://download.affectiva.com/js/3.2/affdex.js"></script>
+
+
 <!--import default Affectiva CSS code-->
 <link rel="stylesheet" type="text/css" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap-theme.min.css" />
 <link rel="stylesheet" type="text/css" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css" />
 
 <!--import custom CSS-->
-<link rel="stylesheet" href="../Affectiva/style.css">
+<link rel="stylesheet" href="Affectiva/style.css">
 
-<!--import Affectiva javascript support-->
-<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.min.js"></script>
-<script src="https://download.affectiva.com/js/3.2/affdex.js"></script>
+<script src="Affectiva/script.js"></script>
+
+
+<script src="script.js"></script>
+
+<!--<script src="script.js"></script> -->
+
 
 <style>
     * {
@@ -93,7 +103,7 @@
       			<h3>Affectiva JS SDK CameraDetector to track different emotions.</h3>
       			<button id="start" onclick="onStart()">Start</button>
       			<!--<button id="stop" onclick="onStop()">Stop</button>-->
-      			<button id="reset" onclick="onReset()">Reset</button>
+      			<button id="reset" onclick="onStop(),onDownload()">Reset</button>
       			<!--<button id="download" onclick="onDownload()">Download</button>-->
     		</div>
         
@@ -188,5 +198,4 @@
     
 </script>
 
-<script src="../Affectiva/script.js"></script>
 
