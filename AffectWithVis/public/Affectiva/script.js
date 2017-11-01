@@ -1,5 +1,3 @@
-console.log("HI")
-
 //python -m SimpleHTTPServer
 
 
@@ -24,9 +22,6 @@ var times = [];
 
 //var timeInterval = setInterval(myTimer(timestamp.toFixed(), faces), 1000);
 
-//instance of Firebase
-//var database = firebase.database();
-//var database = new Firebase('https://emotivis.firebaseio.com');
 
 //Enable detection of all Expressions, Emotions and Emojis classifiers.
 detector.detectAllEmotions();
@@ -201,65 +196,6 @@ function convertToCSV(times, emotions) {
     return str;
 }
 
-<<<<<<< HEAD
-//My new code
-function timeConvertToCSV(objArray) {
-	//log('#logs', "dataArr:"+ itemsFormatted);
-	var array = typeof objArray != 'object' ? JSON.parse(objArray) : objArray;
-	
-    var line = '';
-
-    for (var i = 0; i < objArray.length; i++) {
-    	if (line != ''){
-            line += ',';
-            line += objArray[i].toFixed(0);
-        }
-        else{
-        	line += objArray[i].toFixed(0);
-        }
-    }
-
-    line +=  '\r\n';
-
-    return line;
-}
-
-
-function prepCSV(){
-	
-	//{"joy":0,"sadness":0,"disgust":0,"contempt":0,"anger":0,"fear":0,"surprise":0,"valence":0,"engagement":0},
-    var headers = "Joy, Sadness, Disgust, Contempt, Anger, Fear, Surprise, Valence, Engagement, Time \r\n";
-    
-    	/*}
-    	joy: "Joy",
-    	sadness: "Sadness",
-   		disgust: "Disgust",
-    	contempt: "Contempt",
-    	anger: "Anger",
-    	fear: "Fear",
-   		surprise: "Surprise",
-    	valence: "Valence",
-		engagement: "Engagement",
-		time: "Time"
-    
-	};*/
-	var fileTitle = "affecttest"; // or 'my-unique-title'	
-	//Format for CSV
-	emotFormatted = convertToCSV(emotions);
-	timeFormatted = timeConvertToCSV(times);
-	//var dataArr = new Array(emotions, times);
-	
-	
-	dataFormatted = emotFormatted + timeFormatted;
-	//log('#logs', "data:"+ dataFormatted);
-	
-	exportCSVFile( headers, dataFormatted, fileTitle); 
-	// call the exportCSVFile() function to process the JSON and trigger the download
-	
-
-}
-=======
->>>>>>> steph-base
 
 
 function exportCSVFile(headers, items, fileTitle) {
@@ -292,33 +228,3 @@ function exportCSVFile(headers, items, fileTitle) {
 //End of my new code
 
 
-<<<<<<< HEAD
-
-//Draw the detected facial feature points on the image
-function drawFeaturePoints(img, featurePoints) {
-  var contxt = $('#face_video_canvas')[0].getContext('2d');
-
-  var hRatio = contxt.canvas.width / img.width;
-  var vRatio = contxt.canvas.height / img.height;
-  var ratio = Math.min(hRatio, vRatio);
-
-  contxt.strokeStyle = "#FFFFFF";
-  for (var id in featurePoints) {
-    contxt.beginPath();
-    contxt.arc(featurePoints[id].x,
-      featurePoints[id].y, 2, 0, 2 * Math.PI);
-    contxt.stroke();
-
-  }
-}
-
-//Firebase Code
-//function writeToDatabase(){
-//	myData = convertToCsv();
-//	database.push({fieldName:'csvEmotiData', text:message});
-//}
-
-
-
-=======
->>>>>>> steph-base
