@@ -2,6 +2,7 @@ library(shiny)
 library(tidyverse)
 library(devtools)
 library(ggplot2)
+library(plotly)
 
 #EmotiVis, Bucknell Senior Design
 
@@ -51,7 +52,7 @@ ui <- fluidPage(
     # Main panel for displaying outputs ----
     mainPanel(
       tabsetPanel(
-        tabPanel("Plot",  plotOutput("timeSeries")), 
+        tabPanel("Plot",  plotlyOutput("timeSeries")), 
         tabPanel("Summary", plotOutput("summary")),
         tabPanel("Emotional Averages", plotOutput("avg")),
         tabPanel("Table", tableOutput("table"))
@@ -73,7 +74,7 @@ server <- function(input, output) {
   
   
   #Create a ggplot from the data within the given constraints
-  output$timeSeries <- renderPlot({
+  output$timeSeries <- renderPlotly({
     #Using the user-uploaded csv file
     # inFile = input$file1
     # if (is.null(inFile))
@@ -83,7 +84,7 @@ server <- function(input, output) {
     # 
     emotiplot = plotdata()
     emoti_sub = emotiplot[,c(2:10)]
-    ggplot(emotiplot, aes(x = Time, group = 1)) +
+    toPlot <- ggplot(emotiplot, aes(x = Time, group = )) +
       geom_line(aes(y = Joy, colour="Joy")) +
       geom_line(aes(y = Sadness, colour = "Sadness")) +
       geom_line(aes(y = Disgust, colour = "Disgust")) +
@@ -95,7 +96,8 @@ server <- function(input, output) {
       geom_line(aes(y = Engagement, colour = "Engagement")) +
       ylab(label="Emotional Measure") + xlab("Time") +
       labs(title = "Time Varied Emotional Response")+
-      scale_fill_manual(name = "Emotions", values = c("blue", "red", "orange"))
+      scale_fill_manual(name = "Emotions")
+    ggplotly(toPlot)
   })
   
   #Visualize Table with Option to display desired number of rows of data
