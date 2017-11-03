@@ -52,7 +52,8 @@ ui <- fluidPage(
     mainPanel(
       tabsetPanel(
         tabPanel("Plot",  plotOutput("timeSeries")), 
-        tabPanel("Summary", plotOutput("summary")), 
+        tabPanel("Summary", plotOutput("summary")),
+        tabPanel("Emotional Averages", plotOutput("avg")),
         tabPanel("Table", tableOutput("table"))
       )
       
@@ -67,7 +68,7 @@ server <- function(input, output) {
   #Read in CSV Data
   plotdata <- reactive({
     req(input$file1)
-    read.csv(input$file1$datapath, sep = input$sep)
+    read.csv(input$file1$datapath, sep = input$sep, header = TRUE)
   })
   
   
@@ -110,9 +111,20 @@ server <- function(input, output) {
   
   #Visualize Barchart taking means of every emotion column in the CSV
   output$summary <- renderPlot({
-    
     emo = plotdata()
-    #emoMean <- colMeans(plotdata())
+    #Removing the Time Column for the Purposes of This Plot
+    emo[1] = NULL  
+
+    
+    ggplot(gather(emo, cols, value), aes(x = value)) +
+      geom_histogram(binwidth = 20) + facet_grid(.~cols)
+    # ggplot(stack(emo), aes(x = cols, y = values)) +
+    #   geom_boxplot()
+    
+  })
+  
+  output$avg <- renderPlot({
+    emo = plotdata()
     emoMean = NULL
     emoMean$joy <- mean(emo$Joy)
     emoMean$sadness <- mean(emo$Sadness)
@@ -123,29 +135,39 @@ server <- function(input, output) {
     emoMean$surprise <- mean(emo$Surprise)
     emoMean$valence <- mean(emo$Valence)
     emoMean$engagement <- mean(emo$Engagement)
-    ggplot(gather(emo, cols, value), aes(x = value)) + 
-      geom_histogram(binwidth = 20) + facet_grid(.~cols)
-    # emo2 <- emo %>%
+    
+    listum <- list(c("Joy" = mean(emo$Joy), "Sadness" = mean(emo$Sadness), "Disgust" = mean(emo$Disgust), 
+                     "Contempt" = mean(emo$Contempt), "Anger" = mean(emo$Anger), "Fear" = mean(emo$Fear), 
+                     "Surprise" = mean(emo$Surprise), "Valence" = mean(emo$Valence), "Engagement" = mean(emo$Engagement) ))
+    #df <- data.frame(x = emoMean)
+    #attr(df, "col.names") <- c("Joy", "Sadness", "Disgust", "Contempt", "Anger", "Fear", "Surprise", "Valence", "Engagement")
+    plotIt <- as.data.frame(listum)
+    ggplot(data=plotIt, aes(x = plotIt[columnName])) + geom_histogram()
+    
+     #emoMean <- colMeans(plotdata())
+    
+    # emo2 <- emoMean %>%
     #   gather(
-    #     `joy`,
-    #     `sadness`,
-    #     `disgust`,
-    #     `contempt`,
-    #     `anger`,
-    #     `fear`,
-    #     `surprise`,
-    #     `valence`,
-    #     `engagement`,
+    #     'joy',
+    #     'sadness',
+    #     'disgust',
+    #     'contempt',
+    #     'anger',
+    #     'fear',
+    #     'surprise',
+    #     'valence',
+    #     'engagement',
     #     key = "emotion",
     #     value = "value") %>%
-    #   select(emotion, value, time, key)
-    # 
+    #   select(emotion, value, time)
+    
+    
     # ggplot(emo2) +
-    #   geom_bar(aes(x=emotion, y=value, fill=emotion)) +
-    #   facet_wrap(~ key, ncol=2) +
+    #   geom_bar(aes(x=emotion, y=value, fill=emotion), stat = "identity") +
+    #   facet_wrap(~ key, ncol=2) + 
     #   labs(title ="Mean Affectiva Emotions Across Participants", subtitle="June 26, 2017 to July 28, 2017") +
     #   theme_bw()
-
+    
   })
   
 }
