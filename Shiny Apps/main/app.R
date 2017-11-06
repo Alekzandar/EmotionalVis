@@ -136,9 +136,14 @@ server <- function(input, output) {
     emoMean$valence <- mean(emo$Valence)
     emoMean$engagement <- mean(emo$Engagement)
     
-    df <- data.frame(x = emoMean)
-    attr(df, "row.names") <- c("Joy", "Sadness", "Disgust", "Contempt", "Anger", "Fear", "Surprise", "Valence", "Engagement")
-    hist(df)
+    listum <- list(c("Joy" = mean(emo$Joy), "Sadness" = mean(emo$Sadness), "Disgust" = mean(emo$Disgust), 
+                     "Contempt" = mean(emo$Contempt), "Anger" = mean(emo$Anger), "Fear" = mean(emo$Fear), 
+                     "Surprise" = mean(emo$Surprise), "Valence" = mean(emo$Valence), "Engagement" = mean(emo$Engagement) ))
+    #df <- data.frame(x = emoMean)
+    #attr(df, "col.names") <- c("Joy", "Sadness", "Disgust", "Contempt", "Anger", "Fear", "Surprise", "Valence", "Engagement")
+    plotIt <- as.data.frame(listum)
+    ggplot(data=plotIt, aes(x = plotIt[columnName])) + geom_histogram()
+    
      #emoMean <- colMeans(plotdata())
     
     # emo2 <- emoMean %>%
