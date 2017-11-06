@@ -151,11 +151,17 @@ detector.addEventListener("onImageResultsSuccess", function(faces, image,
 function prepCSV(){
 	
 	//{"joy":0,"sadness":0,"disgust":0,"contempt":0,"anger":0,"fear":0,"surprise":0,"valence":0,"engagement":0},
-    var headers = "Time, Joy, Sadness, Disgust, Contempt, Anger, Fear, Surprise, Valence, Engagement \r\n";
+    var headers = "time, emotions_joy, emotions_sadness, emotions_disgust, emotions_contempt, emotions_anger, emotions_fear, emotions_surprise, emotions_valence, emotions_engagement, key \r\n";
+	
+	//creates a random 5 character key 
+	//NOTE: Probably not safe for long term/ large scale use
+	var key = Math.random().toString(36).substring(7);
+	
+	
 	var fileTitle = "affecttest"; 
 	
 	//Format for CSV
-	dataFormatted = convertToCSV(times, emotions);
+	dataFormatted = convertToCSV(times, emotions, key);
 	// call the exportCSVFile() function to process the JSON and trigger the download
 	exportCSVFile( headers, dataFormatted, fileTitle); 
 }
@@ -168,7 +174,7 @@ function prepCSV(){
 		ie: [[10.2,11.2,12.2],[10.2,11.2,12.2],[10.2,11.2,12.2]]
 	Output: Str object, CSV format
 */	
-function convertToCSV(times, emotions) {
+function convertToCSV(times, emotions, key) {
 	//log('#logs', "dataArr:"+ itemsFormatted);
 	var array = typeof emotions != 'object' ? JSON.parse(emotions) : emotions;
     var str = '';
@@ -190,8 +196,8 @@ function convertToCSV(times, emotions) {
             	line += emotions[i][index].toFixed(2);
             }
         }
-        console.log("line " + i + ": " + line);
-        str += line + '\r\n';
+        //console.log("line " + i + ": " + line);
+        str += line + ', ' + key + '\r\n';
     }
     return str;
 }
