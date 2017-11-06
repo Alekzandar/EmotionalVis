@@ -55,7 +55,8 @@ ui <- fluidPage(
         tabPanel("Plot",  plotlyOutput("timeSeries")), 
         tabPanel("Summary", plotOutput("summary")),
         tabPanel("Emotional Averages", plotOutput("avg")),
-        tabPanel("Table", tableOutput("table"))
+        tabPanel("Table", tableOutput("table")),
+        tabPanel("Steph, ")
       )
       
     )
@@ -84,7 +85,7 @@ server <- function(input, output) {
     # 
     emotiplot = plotdata()
     emoti_sub = emotiplot[,c(2:10)]
-    toPlot <- ggplot(emotiplot, aes(x = Time, group = )) +
+    toPlot <- ggplot(emotiplot, aes(x = Time)) +
       geom_line(aes(y = Joy, colour="Joy")) +
       geom_line(aes(y = Sadness, colour = "Sadness")) +
       geom_line(aes(y = Disgust, colour = "Disgust")) +
@@ -171,6 +172,7 @@ server <- function(input, output) {
     #   theme_bw()
     
   })
+
   
 }
 # Run the app ----
