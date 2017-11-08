@@ -1,5 +1,4 @@
 library(shiny)
-library(tidyverse)
 library(devtools)
 library(ggplot2)
 library(plotly)
@@ -75,6 +74,7 @@ server <- function(input, output) {
   })
   
   
+  ##########################################NEWPLOT##########################################
   #Create a ggplot from the data within the given constraints
   output$timeSeries <- renderPlotly({
     #Using the user-uploaded csv file
@@ -102,6 +102,7 @@ server <- function(input, output) {
     ggplotly(toPlot)
   })
   
+  ##########################################NEWPLOT##########################################
   #Visualize Table with Option to display desired number of rows of data
   output$table <- renderTable({
     if(input$disp == "head") {
@@ -112,7 +113,7 @@ server <- function(input, output) {
     }
   })
 
-  
+  ##########################################NEWPLOT##########################################  
   #Visualize Barchart taking means of every emotion column in the CSV
   output$summary <- renderPlot({
     emo = plotdata()
@@ -128,7 +129,8 @@ server <- function(input, output) {
     #   geom_boxplot()
     
   })
-  
+  ##########################################NEWPLOT##########################################  
+  #Visualize Barchart taking means of every emotion column in the CSV
   output$avg <- renderPlotly({
     emo = plotdata()
     emo$joy <- mean(emo$emotions_joy)
@@ -156,6 +158,7 @@ server <- function(input, output) {
         value = "value") %>%
       select(emotion, value, time, key)
     
+    #Function generates new barchart for every seperate user detected
     ggplot(emo2) +
       geom_bar(aes(x=emotion, y=value, fill=emotion), stat = "identity") +
       facet_wrap(~ key, ncol=2) + 
@@ -165,7 +168,7 @@ server <- function(input, output) {
    
   })
   
-  
+  #Testing Random Charts for Translation and Rendering into R
   output$test <- renderPlot({
     
     emo = plotdata()
