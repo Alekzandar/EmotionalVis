@@ -54,9 +54,9 @@ ui <- fluidPage(
       tabsetPanel(
         tabPanel("Plot",  plotlyOutput("timeSeries")), 
         tabPanel("Summary", plotOutput("summary")),
-        tabPanel("Emotional Averages", plotOutput("avg")),
-        tabPanel("Table", tableOutput("table")),
-        tabPanel("Steph, ")
+        tabPanel("Emotional Averages", plotlyOutput("avg")),
+        tabPanel("Testing New", plotOutput("test")),
+        tabPanel("Table", tableOutput("table"))
       )
       
     )
@@ -85,16 +85,16 @@ server <- function(input, output) {
     # 
     emotiplot = plotdata()
     emoti_sub = emotiplot[,c(2:10)]
-    toPlot <- ggplot(emotiplot, aes(x = Time)) +
-      geom_line(aes(y = Joy, colour="Joy")) +
-      geom_line(aes(y = Sadness, colour = "Sadness")) +
-      geom_line(aes(y = Disgust, colour = "Disgust")) +
-      geom_line(aes(y = Contempt, colour="Contempt")) +
-      geom_line(aes(y = Anger, colour = "Anger")) +
-      geom_line(aes(y = Fear, colour = "Fear")) +
-      geom_line(aes(y = Surprise, colour = "Surprise")) +
-      geom_line(aes(y = Valence, colour="Valence")) +
-      geom_line(aes(y = Engagement, colour = "Engagement")) +
+    toPlot <- ggplot(emotiplot, aes(x = time)) +
+      geom_line(aes(y = emotions_joy, colour="Joy")) +
+      geom_line(aes(y = emotions_sadness, colour = "Sadness")) +
+      geom_line(aes(y = emotions_disgust, colour = "Disgust")) +
+      geom_line(aes(y = emotions_contempt, colour="Contempt")) +
+      geom_line(aes(y = emotions_anger, colour = "Anger")) +
+      geom_line(aes(y = emotions_fear, colour = "Fear")) +
+      geom_line(aes(y = emotions_surprise, colour = "Surprise")) +
+      geom_line(aes(y = emotions_valence, colour="Valence")) +
+      geom_line(aes(y = emotions_engagement, colour = "Engagement")) +
       ylab(label="Emotional Measure") + xlab("Time") +
       labs(title = "Time Varied Emotional Response")+
       scale_fill_manual(name = "Emotions")
@@ -116,60 +116,77 @@ server <- function(input, output) {
   output$summary <- renderPlot({
     emo = plotdata()
     #Removing the Time Column for the Purposes of This Plot
-    emo[1] = NULL  
+    emo[1] = NULL
+    emo[10] = NULL
+ 
 
     
     ggplot(gather(emo, cols, value), aes(x = value)) +
-      geom_histogram(binwidth = 20) + facet_grid(.~cols)
+      geom_line(stat = "count") + facet_grid(.~cols)
     # ggplot(stack(emo), aes(x = cols, y = values)) +
     #   geom_boxplot()
     
   })
   
-  output$avg <- renderPlot({
+  output$avg <- renderPlotly({
+    emo = plotdata()
+    emo$joy <- mean(emo$emotions_joy)
+    emo$sadness <- mean(emo$emotions_sadness)
+    emo$disgust <- mean(emo$emotions_disgust)
+    emo$contempt <- mean(emo$emotions_contempt)
+    emo$anger <- mean(emo$emotions_anger)
+    emo$fear <- mean(emo$emotions_fear)
+    emo$surprise <- mean(emo$emotions_surprise)
+    emo$valence <- mean(emo$emotions_valence)
+    emo$engagement <- mean(emo$emotions_engagement)
+    
+    emo2 <- emo %>%  
+      gather(
+        `joy`, 
+        `sadness`, 
+        `disgust`, 
+        `contempt`, 
+        `anger`, 
+        `fear`, 
+        `surprise`, 
+        `valence`, 
+        `engagement`, 
+        key = "emotion", 
+        value = "value") %>%
+      select(emotion, value, time, key)
+    
+    ggplot(emo2) +
+      geom_bar(aes(x=emotion, y=value, fill=emotion), stat = "identity") +
+      facet_wrap(~ key, ncol=2) + 
+      labs(title ="Mean Affectiva Emotions Across Participants") +
+      theme_bw()
+   
+   
+  })
+  
+  
+  output$test <- renderPlot({
+    
     emo = plotdata()
     emoMean = NULL
-    emoMean$joy <- mean(emo$Joy)
-    emoMean$sadness <- mean(emo$Sadness)
-    emoMean$disgust <- mean(emo$Disgust)
-    emoMean$contempt <- mean(emo$Contempt)
-    emoMean$anger <- mean(emo$Anger)
-    emoMean$fear <- mean(emo$Fear)
-    emoMean$surprise <- mean(emo$Surprise)
-    emoMean$valence <- mean(emo$Valence)
-    emoMean$engagement <- mean(emo$Engagement)
+    emoMean$joy <- mean(emo$emotions_joy)
+    emoMean$sadness <- mean(emo$emotions_sadness)
+    emoMean$disgust <- mean(emo$emotions_disgust)
+    emoMean$contempt <- mean(emo$emotions_contempt)
+    emoMean$anger <- mean(emo$emotions_anger)
+    emoMean$fear <- mean(emo$emotions_fear)
+    emoMean$surprise <- mean(emo$emotions_surprise)
+    emoMean$valence <- mean(emo$emotions_valence)
+    emoMean$engagement <- mean(emo$emotions_engagement)
     
-    listum <- list(c("Joy" = mean(emo$Joy), "Sadness" = mean(emo$Sadness), "Disgust" = mean(emo$Disgust), 
-                     "Contempt" = mean(emo$Contempt), "Anger" = mean(emo$Anger), "Fear" = mean(emo$Fear), 
-                     "Surprise" = mean(emo$Surprise), "Valence" = mean(emo$Valence), "Engagement" = mean(emo$Engagement) ))
+    listum <- list(c("Joy" = mean(emo$emotions_joy), "Sadness" = mean(emo$emotions_sadness), "Disgust" = mean(emo$emotions_disgust), 
+                     "Contempt" = mean(emo$emotions_contempt), "Anger" = mean(emo$emotions_Anger), "Fear" = mean(emo$emotions_fear), 
+                     "Surprise" = mean(emo$emotions_surprise), "Valence" = mean(emo$emotions_valence), "Engagement" = mean(emo$emotions_engagement) ))
     #df <- data.frame(x = emoMean)
     #attr(df, "col.names") <- c("Joy", "Sadness", "Disgust", "Contempt", "Anger", "Fear", "Surprise", "Valence", "Engagement")
     plotIt <- as.data.frame(listum)
     ggplot(data=plotIt, aes(x = plotIt[columnName])) + geom_histogram()
     
-     #emoMean <- colMeans(plotdata())
-    
-    # emo2 <- emoMean %>%
-    #   gather(
-    #     'joy',
-    #     'sadness',
-    #     'disgust',
-    #     'contempt',
-    #     'anger',
-    #     'fear',
-    #     'surprise',
-    #     'valence',
-    #     'engagement',
-    #     key = "emotion",
-    #     value = "value") %>%
-    #   select(emotion, value, time)
-    
-    
-    # ggplot(emo2) +
-    #   geom_bar(aes(x=emotion, y=value, fill=emotion), stat = "identity") +
-    #   facet_wrap(~ key, ncol=2) + 
-    #   labs(title ="Mean Affectiva Emotions Across Participants", subtitle="June 26, 2017 to July 28, 2017") +
-    #   theme_bw()
     
   })
 
