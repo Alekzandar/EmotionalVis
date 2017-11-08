@@ -3,11 +3,12 @@ library(tidyverse)
 library(devtools)
 library(ggplot2)
 library(plotly)
+library(shinythemes)
 
 #EmotiVis, Bucknell Senior Design
 
 # Define UI for data upload app ----
-ui <- fluidPage(
+ui <- fluidPage(theme = shinytheme("cerulean"),
   
   # App title ----
   titlePanel("Uploading Files"),
