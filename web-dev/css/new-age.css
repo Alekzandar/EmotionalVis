@@ -112,15 +112,29 @@ section {
           #mainNav.navbar-shrink .navbar-nav > li > a:focus:hover {
             color: #222222; } }
 
+.aboutaffectiva {
+  background: #4ecdc4; /* fallback for old browsers */
+  background: -webkit-linear-gradient(to top, #ffffff,  #dae9f4, #241d1f); /* Chrome 10-25, Safari 5.1-6 */
+  background: linear-gradient(to top, #ffffff, #dae9f4, #241d1f)
+}
+
+//.aboutus {
+//  background: #4ecdc4; /* fallback for old browsers */
+//  background: -webkit-linear-gradient(to top, #ffffff,  #4ecdc4); /* Chrome 10-25, Safari 5.1-6 */
+//  background: linear-gradient(to top, #ffffff, #4ecdc4)
+//}
+
 header.masthead {
   position: relative;
   width: 100%;
   padding-top: 150px;
   padding-bottom: 100px;
-  color: white;
-  background: url("../img/bg-pattern.png"), #9baec8;
-  background: url("../img/bg-pattern.png"), -webkit-linear-gradient(to left, #9baec8,#282c37);
-  background: url("../img/bg-pattern.png"), linear-gradient(to left, #9baec8,#282c37); }
+  color: lavender;
+  background: url("../img/plot.gif"); 
+  background-position: right;
+  //background: url("../img/bg-pattern.png"), #9baec8;
+  //background: url("../img/bg-pattern.png"), -webkit-linear-gradient(to left, #9baec8,#282c37);
+  //background: url("../img/bg-pattern.png"), linear-gradient(to left, #9baec8,#282c37); }
   header.masthead .header-content {
     max-width: 500px;
     margin-bottom: 100px;
