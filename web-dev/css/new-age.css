@@ -114,8 +114,8 @@ section {
 
 .aboutaffectiva {
   background: #4ecdc4; /* fallback for old browsers */
-  background: -webkit-linear-gradient(to top, #ffffff,  #dae9f4, #241d1f); /* Chrome 10-25, Safari 5.1-6 */
-  background: linear-gradient(to top, #ffffff, #dae9f4, #241d1f)
+  background: -webkit-linear-gradient(to top, #ffffff,#dae9f4,  #dae9f4, #241d1f); /* Chrome 10-25, Safari 5.1-6 */
+  background: linear-gradient(to top, #ffffff, #dae9f4, #dae9f4,#241d1f)
 }
 
 //.aboutus {
