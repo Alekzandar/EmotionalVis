@@ -58,10 +58,14 @@ ui <- fluidPage(theme = shinytheme("cerulean"),
         tabPanel("Summary", plotOutput("summary")),
         tabPanel("Emotional Averages", plotlyOutput("avg")),
         tabPanel("Testing New", plotOutput("test")),
+<<<<<<< HEAD
         tabPanel("Table", tableOutput("table")),
-        tabPanel("Gauge Plot", plotlyOutput("gauge"), uiOutput("slider")),
+        tabPanel("Gauge Plot", plotlyOutput("gauge"), uiOutput("slider"))
+        
+=======
         tabPanel("Violin plot", plotOutput("violin")),
         tabPanel("Table", tableOutput("table"))
+>>>>>>> d34c125248b9855a7f9fb97b59cfc18cd1c98429
       )
       
     )
