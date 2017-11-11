@@ -3,6 +3,7 @@ library(devtools)
 library(ggplot2)
 library(plotly)
 library(shinythemes)
+library(tidyverse)
 
 #EmotiVis, Bucknell Senior Design
 
@@ -11,6 +12,7 @@ ui <- fluidPage(theme = shinytheme("cerulean"),
   
   # App title ----
   titlePanel("Uploading Files"),
+  
   
   # Sidebar layout with input and output definitions ----
   sidebarLayout(
@@ -56,7 +58,9 @@ ui <- fluidPage(theme = shinytheme("cerulean"),
         tabPanel("Summary", plotOutput("summary")),
         tabPanel("Emotional Averages", plotlyOutput("avg")),
         tabPanel("Testing New", plotOutput("test")),
-        tabPanel("Table", tableOutput("table"))
+        tabPanel("Table", tableOutput("table")),
+        tabPanel("Gauge Plot", plotlyOutput("gauge"), uiOutput("slider"))
+        
       )
       
     )
@@ -167,7 +171,118 @@ server <- function(input, output) {
    
    
   })
+ 
   
+  output$slider <- renderUI({
+    emo = plotdata()
+    engageArr <- emo$emotions_engagement 
+    timeArr <- emo$time
+    
+    sliderInput("inSlider", "Time Value: ", min = 1, max = length(timeArr), value = 1, step =1)}) 
+  
+  ##########################################GAUGE PLOT##########################################  
+  #Visualize Gauge Plot taking means of every emotion column in the CSV
+  output$gauge <- renderPlotly({ 
+    #Put Code Here
+    
+    base_plot <- plot_ly(
+      type = "pie",
+      values = c(40, 10, 10, 10, 10, 10, 10),
+      labels = c("-", "0", "20", "40", "60", "80", "100"),
+      rotation = 108,
+      direction = "clockwise",
+      hole = 0.4,
+      textinfo = "label",
+      textposition = "outside",
+      hoverinfo = "none",
+      domain = list(x = c(0, 0.48), y = c(0, 1)),
+      marker = list(colors = c('rgb(255, 255, 255)', 'rgb(255, 255, 255)', 'rgb(255, 255, 255)', 'rgb(255, 255, 255)', 'rgb(255, 255, 255)', 'rgb(255, 255, 255)', 'rgb(255, 255, 255)')),
+      showlegend = FALSE
+    )
+    
+    base_plot <- add_trace(
+      base_plot,
+      type = "pie",
+      values = c(50, 10, 10, 10, 10, 10),
+      labels = c("Engagement Meter", "Not Engaged", "Not Very Engaged", "Somewhat Engaged", "Very Engaged", "Fully Engaged"),
+      rotation = 90,
+      direction = "clockwise",
+      hole = 0.3,
+      textinfo = "label",
+      textposition = "inside",
+      hoverinfo = "none",
+      domain = list(x = c(0, 0.48), y = c(0, 1)),
+      marker = list(colors = c('rgb(255, 255, 255)', 'rgb(232,226,202)', 'rgb(226,210,172)', 'rgb(223,189,139)', 'rgb(223,162,103)', 'rgb(226,126,64)')),
+      showlegend= FALSE
+    )
+    
+    
+    emo = plotdata()
+    engageArr <- emo$emotions_engagement 
+    timeArr <- emo$time
+    
+    sliderValue <- input$inSlider
+    sliderText <- paste('\n At time ', timeArr[sliderValue] , '\n Engagement = ' , engageArr[sliderValue])
+    
+    a <- list(
+      showticklabels = FALSE,
+      autotick = FALSE,
+      showgrid = FALSE,
+      zeroline = FALSE)
+        
+   b <- list(
+      xref = 'paper',
+      yref = 'paper',
+      x = 0.23,
+      y = 0.45,
+      showarrow = FALSE,
+      text = sliderText)
+    
+    
+    
+    #currEngagement = emotions_engagement
+    #These are the potential paths for engagement....
+    #Only need to adjust middle tw values (could be better specified)
+   
+    nEngaged = 'M 0.235 0.5 L 0.18 0.54 L 0.245 0.5 Z'
+    nVEngaged = 'M 0.235 0.5 L 0.20 0.58 L 0.245 0.5 Z'
+    sEngaged = 'M 0.235 0.5 L 0.24 0.62 L 0.245 0.5 Z'
+    vEngaged = 'M 0.235 0.5 L 0.28 0.58 L 0.245 0.5 Z'
+    fEngaged = 'M 0.235 0.5 L 0.30 0.54 L 0.245 0.5 Z'
+    
+    if (engageArr[sliderValue] < 20){
+      currEngage = nEngaged
+    }else if (engageArr[sliderValue] < 40){
+      currEngage = nVEngaged
+    }else if (engageArr[sliderValue] < 60){
+      currEngage = sEngaged
+    }else if (engageArr[sliderValue] < 80){
+      currEngage = vEngaged
+    }else{
+      currEngage = fEngaged
+    }
+    
+    base_chart <- layout(
+      base_plot,
+      shapes = list(
+        list(
+          type = 'path',
+          path = currEngage,
+          xref = 'paper',
+          yref = 'paper',
+          fillcolor = 'rgba(44, 160, 101, 0.5)'
+        )
+      ),
+      xaxis = a,
+      yaxis = a,
+      annotations = b
+    )
+    
+    
+  })
+  
+  
+  #################################################################################### 
   #Testing Random Charts for Translation and Rendering into R
   output$test <- renderPlot({
     
