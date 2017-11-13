@@ -3,70 +3,67 @@ library(devtools)
 library(ggplot2)
 library(plotly)
 library(shinythemes)
-library(tidyverse)
 
 #EmotiVis, Bucknell Senior Design
 
 # Define UI for data upload app ----
 ui <- fluidPage(theme = shinytheme("cerulean"),
-  
-  # App title ----
-  titlePanel("Uploading Files"),
-  
-  
-  # Sidebar layout with input and output definitions ----
-  sidebarLayout(
-    
-    # Sidebar panel for inputs ----
-    sidebarPanel(
-      # Input: Select a file ----
-      fileInput("file1", "Choose CSV File From Valid EmotiVis Affectiva Trial",
-                multiple = TRUE,
-                accept = c("text/csv",
-                           "text/comma-separated-values,text/plain",
-                           ".csv")),
-      
-      # Horizontal line ----
-      tags$hr("Displayed is gathered user emotional-response data over the time for which the specific Affectiva trial run.
-              Values are scaled from -100 to 100, with 100 being the highest measured response for the given emotion."),
-      # Horizontal line ----
-      tags$hr(),
-      # Input: Select separator ----
-      radioButtons("sep", "Separator",
-                   choices = c(Comma = ",",
-                               Semicolon = ";",
-                               Tab = "\t"),
-                   selected = ","), 
-      
-
-      
-      # Horizontal line ----
-      tags$hr(),
-      
-      # Input: Select number of rows to display ----
-      radioButtons("disp", "Display",
-                   choices = c(All = "all",
-                               head = "head"),
-                   #Defaut to displaying all data in table
-                   selected = "all") 
-      ),
-    
-    # Main panel for displaying outputs ----
-    mainPanel(
-      tabsetPanel(
-        tabPanel("Plot",  plotlyOutput("timeSeries")), 
-        tabPanel("Summary", plotOutput("summary")),
-        tabPanel("Emotional Averages", plotlyOutput("avg")),
-        tabPanel("Testing New", plotOutput("test")),
-        tabPanel("Table", tableOutput("table")),
-        tabPanel("Gauge Plot", plotlyOutput("gauge"), uiOutput("slider")),
-        tabPanel("Violin plot", plotOutput("violin")),
-        tabPanel("Table", tableOutput("table"))
-      )
-      
-    )
-    
-  )
+                
+                # App title ----
+                titlePanel("Uploading Files"),
+                
+                # Sidebar layout with input and output definitions ----
+                sidebarLayout(
+                  
+                  # Sidebar panel for inputs ----
+                  sidebarPanel(
+                    # Input: Select a file ----
+                    fileInput("file1", "Choose CSV File From Valid EmotiVis Affectiva Trial",
+                              multiple = TRUE,
+                              accept = c("text/csv",
+                                         "text/comma-separated-values,text/plain",
+                                         ".csv")),
+                    
+                    # Horizontal line ----
+                    tags$hr("Displayed is gathered user emotional-response data over the time for which the specific Affectiva trial run.
+                            Values are scaled from -100 to 100, with 100 being the highest measured response for the given emotion."),
+                    # Horizontal line ----
+                    tags$hr(),
+                    # Input: Select separator ----
+                    radioButtons("sep", "Separator",
+                                 choices = c(Comma = ",",
+                                             Semicolon = ";",
+                                             Tab = "\t"),
+                                 selected = ","), 
+                    
+                    
+                    
+                    # Horizontal line ----
+                    tags$hr(),
+                    
+                    # Input: Select number of rows to display ----
+                    radioButtons("disp", "Display",
+                                 choices = c(All = "all",
+                                             head = "head"),
+                                 #Defaut to displaying all data in table
+                                 selected = "all") 
+                    ),
+                  
+                  # Main panel for displaying outputs ----
+                  mainPanel(
+                    tabsetPanel(
+                      tabPanel("Plot",  plotlyOutput("timeSeries")), 
+                      tabPanel("Summary", plotOutput("summary")),
+                      tabPanel("Emotional Averages", plotlyOutput("avg")),
+                      tabPanel("Testing New", plotOutput("test")),
+                      tabPanel("Violin plot", plotOutput("violin")),
+                      tabPanel("Table", tableOutput("table")),
+                      tabPanel("Gauge Plot", plotlyOutput("gauge"), uiOutput("slider"))
+                    )
+                    
+                  )
+                  
+                )
 )
 
 # Define server logic to read selected file ----
@@ -117,7 +114,7 @@ server <- function(input, output) {
       return(plotdata())
     }
   })
-
+  
   ##########################################NEWPLOT##########################################  
   #Visualize Barchart taking means of every emotion column in the CSV
   output$summary <- renderPlot({
@@ -125,8 +122,8 @@ server <- function(input, output) {
     #Removing the Time Column for the Purposes of This Plot
     emo[1] = NULL
     emo[10] = NULL
- 
-
+    
+    
     
     ggplot(gather(emo, cols, value), aes(x = value)) +
       geom_line(stat = "count") + facet_grid(.~cols)
@@ -169,11 +166,51 @@ server <- function(input, output) {
       facet_wrap(~ key, ncol=2) + 
       labs(title ="Mean Affectiva Emotions Across Participants") +
       theme_bw()
-   
-   
+    
+    
   })
- 
   
+  #Testing Random Charts for Translation and Rendering into R
+  output$test <- renderPlot({
+    
+    emo = plotdata()
+    emoMean = NULL
+    emoMean$joy <- mean(emo$emotions_joy)
+    emoMean$sadness <- mean(emo$emotions_sadness)
+    emoMean$disgust <- mean(emo$emotions_disgust)
+    emoMean$contempt <- mean(emo$emotions_contempt)
+    emoMean$anger <- mean(emo$emotions_anger)
+    emoMean$fear <- mean(emo$emotions_fear)
+    emoMean$surprise <- mean(emo$emotions_surprise)
+    emoMean$valence <- mean(emo$emotions_valence)
+    emoMean$engagement <- mean(emo$emotions_engagement)
+    
+    listum <- list(c("Joy" = mean(emo$emotions_joy), "Sadness" = mean(emo$emotions_sadness), "Disgust" = mean(emo$emotions_disgust), 
+                     "Contempt" = mean(emo$emotions_contempt), "Anger" = mean(emo$emotions_Anger), "Fear" = mean(emo$emotions_fear), 
+                     "Surprise" = mean(emo$emotions_surprise), "Valence" = mean(emo$emotions_valence), 
+                     "Engagement" = mean(emo$emotions_engagement) ))
+    #df <- data.frame(x = emoMean)
+    #attr(df, "col.names") <- c("Joy", "Sadness", "Disgust", "Contempt", "Anger", "Fear", "Surprise", "Valence", "Engagement")
+    plotIt <- as.data.frame(listum)
+    ggplot(data=plotIt, aes(x = plotIt[columnName])) + geom_histogram()
+    
+    
+  })
+  
+  # Violin plot 
+  output$violin <- renderPlot({
+    emo = plotdata()
+    
+    ggplot(emo) + geom_violin(aes(x=emo$emotions_joy, y= emotions_valence, fill = "joy")) +
+      geom_violin(aes(y=emo$emotions_sadness, x = emotions_valence, fill = "sadness")) +
+      geom_violin(aes(x=emo$emotions_disgust, y=emotions_valence, fill = "disgust")) +
+      geom_violin(aes(x=emo$emotions_contempt, y = emotions_valence, fill = "contempt")) +
+      geom_violin(aes(x=emo$emotions_fear, y = emotions_valence, fill="fear")) +
+      geom_violin(aes(x=emo$emotions_surprise, y = emotions_valence, fill="surprise")) +
+      geom_violin(aes(x=emo$emotions_engagement, y = emotions_valence, fill="engagement")) +
+      geom_violin(aes(x=emo$emotions_anger, y = emotions_valence, fill = "anger")) + xlab("emotion") + ylab("valence")
+    
+  })
   output$slider <- renderUI({
     emo = plotdata()
     engageArr <- emo$emotions_engagement 
@@ -230,8 +267,8 @@ server <- function(input, output) {
       autotick = FALSE,
       showgrid = FALSE,
       zeroline = FALSE)
-        
-   b <- list(
+    
+    b <- list(
       xref = 'paper',
       yref = 'paper',
       x = 0.23,
@@ -244,7 +281,7 @@ server <- function(input, output) {
     #currEngagement = emotions_engagement
     #These are the potential paths for engagement....
     #Only need to adjust middle tw values (could be better specified)
-   
+    
     nEngaged = 'M 0.235 0.5 L 0.18 0.54 L 0.245 0.5 Z'
     nVEngaged = 'M 0.235 0.5 L 0.20 0.58 L 0.245 0.5 Z'
     sEngaged = 'M 0.235 0.5 L 0.24 0.62 L 0.245 0.5 Z'
@@ -283,51 +320,8 @@ server <- function(input, output) {
   })
   
   
-  #################################################################################### 
-  #Testing Random Charts for Translation and Rendering into R
-  output$test <- renderPlot({
-    
-    emo = plotdata()
-    emoMean = NULL
-    emoMean$joy <- mean(emo$emotions_joy)
-    emoMean$sadness <- mean(emo$emotions_sadness)
-    emoMean$disgust <- mean(emo$emotions_disgust)
-    emoMean$contempt <- mean(emo$emotions_contempt)
-    emoMean$anger <- mean(emo$emotions_anger)
-    emoMean$fear <- mean(emo$emotions_fear)
-    emoMean$surprise <- mean(emo$emotions_surprise)
-    emoMean$valence <- mean(emo$emotions_valence)
-    emoMean$engagement <- mean(emo$emotions_engagement)
-    
-    listum <- list(c("Joy" = mean(emo$emotions_joy), "Sadness" = mean(emo$emotions_sadness), "Disgust" = mean(emo$emotions_disgust), 
-                     "Contempt" = mean(emo$emotions_contempt), "Anger" = mean(emo$emotions_Anger), "Fear" = mean(emo$emotions_fear), 
-                     "Surprise" = mean(emo$emotions_surprise), "Valence" = mean(emo$emotions_valence), 
-                     "Engagement" = mean(emo$emotions_engagement) ))
-    #df <- data.frame(x = emoMean)
-    #attr(df, "col.names") <- c("Joy", "Sadness", "Disgust", "Contempt", "Anger", "Fear", "Surprise", "Valence", "Engagement")
-    plotIt <- as.data.frame(listum)
-    ggplot(data=plotIt, aes(x = plotIt[columnName])) + geom_histogram()
-    
-    
-  })
-  
-  # Violin plot 
-  output$violin <- renderPlot({
-    emo = plotdata()
-    
-    ggplot(emo) + geom_violin(aes(x=emo$emotions_joy, y= emotions_valence, fill = "joy")) +
-      geom_violin(aes(y=emo$emotions_sadness, x = emotions_valence, fill = "sadness")) +
-      geom_violin(aes(x=emo$emotions_disgust, y=emotions_valence, fill = "disgust")) +
-      geom_violin(aes(x=emo$emotions_contempt, y = emotions_valence, fill = "contempt")) +
-      geom_violin(aes(x=emo$emotions_fear, y = emotions_valence, fill="fear")) +
-      geom_violin(aes(x=emo$emotions_surprise, y = emotions_valence, fill="surprise")) +
-      geom_violin(aes(x=emo$emotions_engagement, y = emotions_valence, fill="engagement")) +
-      geom_violin(aes(x=emo$emotions_anger, y = emotions_valence, fill = "anger")) + xlab("emotion") + ylab("valence")
-    
-  })
-
 }
-  
-  
+
+
 # Run the app ----
 shinyApp(ui, server)
