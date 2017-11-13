@@ -59,9 +59,8 @@ ui <- fluidPage(theme = shinytheme("cerulean"),
         tabPanel("Emotional Averages", plotlyOutput("avg")),
         tabPanel("Testing New", plotOutput("test")),
         tabPanel("Table", tableOutput("table")),
-        tabPanel("Gauge Plot", plotlyOutput("gauge"), uiOutput("slider")),
-        tabPanel("Violin plot", plotOutput("violin")),
-        tabPanel("Table", tableOutput("table"))
+        tabPanel("Gauge Plot", plotlyOutput("gauge"), uiOutput("slider"))
+        
       )
       
     )
@@ -301,8 +300,7 @@ server <- function(input, output) {
     
     listum <- list(c("Joy" = mean(emo$emotions_joy), "Sadness" = mean(emo$emotions_sadness), "Disgust" = mean(emo$emotions_disgust), 
                      "Contempt" = mean(emo$emotions_contempt), "Anger" = mean(emo$emotions_Anger), "Fear" = mean(emo$emotions_fear), 
-                     "Surprise" = mean(emo$emotions_surprise), "Valence" = mean(emo$emotions_valence), 
-                     "Engagement" = mean(emo$emotions_engagement) ))
+                     "Surprise" = mean(emo$emotions_surprise), "Valence" = mean(emo$emotions_valence), "Engagement" = mean(emo$emotions_engagement) ))
     #df <- data.frame(x = emoMean)
     #attr(df, "col.names") <- c("Joy", "Sadness", "Disgust", "Contempt", "Anger", "Fear", "Surprise", "Valence", "Engagement")
     plotIt <- as.data.frame(listum)
@@ -310,24 +308,8 @@ server <- function(input, output) {
     
     
   })
-  
-  # Violin plot 
-  output$violin <- renderPlot({
-    emo = plotdata()
-    
-    ggplot(emo) + geom_violin(aes(x=emo$emotions_joy, y= emotions_valence, fill = "joy")) +
-      geom_violin(aes(y=emo$emotions_sadness, x = emotions_valence, fill = "sadness")) +
-      geom_violin(aes(x=emo$emotions_disgust, y=emotions_valence, fill = "disgust")) +
-      geom_violin(aes(x=emo$emotions_contempt, y = emotions_valence, fill = "contempt")) +
-      geom_violin(aes(x=emo$emotions_fear, y = emotions_valence, fill="fear")) +
-      geom_violin(aes(x=emo$emotions_surprise, y = emotions_valence, fill="surprise")) +
-      geom_violin(aes(x=emo$emotions_engagement, y = emotions_valence, fill="engagement")) +
-      geom_violin(aes(x=emo$emotions_anger, y = emotions_valence, fill = "anger")) + xlab("emotion") + ylab("valence")
-    
-  })
 
+  
 }
-  
-  
 # Run the app ----
 shinyApp(ui, server)
