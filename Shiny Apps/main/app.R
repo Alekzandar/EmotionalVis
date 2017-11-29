@@ -4,14 +4,28 @@ library(ggplot2)
 library(plotly)
 library(shinythemes)
 library(tidyverse)
+library(tools)
 
 #EmotiVis, Bucknell Senior Design
+
+#Changing Maximum Allowable FileSize to 15MB
+options(shiny.maxRequestSize = 15*1024^2)
 
 # Define UI for data upload app ----
 ui <- fluidPage(theme = shinytheme("cerulean"),
                 
+                #Styling Error Message
+                tags$head(
+                  tags$style(HTML("
+                                  .shiny-output-error-validation {
+                                  color: green;
+                                  }
+                                  "))
+                  ),
+                
+                
                 # App title ----
-                titlePanel("Uploading Files"),
+                titlePanel("EmotiVis App Dashboard"),
                 
                 # Sidebar layout with input and output definitions ----
                 sidebarLayout(
@@ -21,9 +35,7 @@ ui <- fluidPage(theme = shinytheme("cerulean"),
                     # Input: Select a file ----
                     fileInput("file1", "Choose CSV File From Valid EmotiVis Affectiva Trial",
                               multiple = TRUE,
-                              accept = c("text/csv",
-                                         "text/comma-separated-values,text/plain",
-                                         ".csv")),
+                              accept = c(".csv")),
                     
                     # Horizontal line ----
                     tags$hr("Displayed is gathered user emotional-response data over the time for which the specific Affectiva trial run.
