@@ -3,7 +3,7 @@ library(devtools)
 library(ggplot2)
 library(plotly)
 library(shinythemes)
-library(ggthemes)
+library(tidyverse)
 
 #EmotiVis, Bucknell Senior Design
 
@@ -53,13 +53,15 @@ ui <- fluidPage(theme = shinytheme("cerulean"),
                   # Main panel for displaying outputs ----
                   mainPanel(
                     tabsetPanel(
-                      tabPanel("Plot",  plotlyOutput("timeSeries")), 
-                      tabPanel("Summary", plotOutput("summary")),
-                      tabPanel("Emotional Averages", plotlyOutput("avg")),
-                      tabPanel("Testing New", plotOutput("test")),
-                      tabPanel("Boxplot", plotOutput("boxplot")),
-                      tabPanel("Table", tableOutput("table")),
-                      tabPanel("Gauge Plot", plotlyOutput("gauge"), uiOutput("slider"))
+                      tabPanel("Plot",
+                               plotlyOutput("timeSeries"), 
+                               plotOutput("summary"),
+                               plotlyOutput("avg"),
+                               #plotOutput("test"),
+                               plotOutput("violin"),
+                               tableOutput("table"),
+                               plotlyOutput("gauge"), 
+                               uiOutput("slider"))
                     )
                     
                   )
@@ -198,24 +200,20 @@ server <- function(input, output) {
     
   })
   
-  output$boxplot <- renderPlot({
-    dat <- plotdata()
-    emotions <- c("Joy", "Sadness", "Disgust", "Fear", "Contempt", "Surprise", "Anger")
-    emo_to_color <- c("gold", "steelblue2", "sienna4", "grey69", "pink2", "tan2", "firebrick2")
+  # Violin plot 
+  output$violin <- renderPlot({
+    emo = plotdata()
     
-    bp <- ggplot(dat) + geom_boxplot(aes(y =emotions_joy, x= factor("Joy")), color = "gold") + 
-      geom_boxplot(aes(y =emotions_sadness, x= factor("Sadness")), color = "steelblue2") +
-      geom_boxplot(aes(y =emotions_disgust, x= factor("Disgust")), color = "sienna4") + 
-      geom_boxplot(aes(y =emotions_fear, x= factor("Fear")), color = "grey69") +
-      geom_boxplot(aes(y =emotions_contempt, x= factor("Contempt")), color = "pink2") + 
-      geom_boxplot(aes(y =emotions_surprise, x= factor("Surprise")), color = "tan2") + 
-      geom_boxplot(aes(y =emotions_anger, x= factor("Anger")), color = "firebrick2") + 
-      ylab("Mean of each emotion detected") + xlab("Emotion") 
-    bp
-    
+    ggplot(emo) + geom_violin(aes(x=emo$emotions_joy, y= emotions_valence, fill = "joy")) +
+      geom_violin(aes(y=emo$emotions_sadness, x = emotions_valence, fill = "sadness")) +
+      geom_violin(aes(x=emo$emotions_disgust, y=emotions_valence, fill = "disgust")) +
+      geom_violin(aes(x=emo$emotions_contempt, y = emotions_valence, fill = "contempt")) +
+      geom_violin(aes(x=emo$emotions_fear, y = emotions_valence, fill="fear")) +
+      geom_violin(aes(x=emo$emotions_surprise, y = emotions_valence, fill="surprise")) +
+      geom_violin(aes(x=emo$emotions_engagement, y = emotions_valence, fill="engagement")) +
+      geom_violin(aes(x=emo$emotions_anger, y = emotions_valence, fill = "anger")) + xlab("emotion") + ylab("valence")
     
   })
-  
   output$slider <- renderUI({
     emo = plotdata()
     engageArr <- emo$emotions_engagement 
