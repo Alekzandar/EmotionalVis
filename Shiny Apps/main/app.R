@@ -12,7 +12,8 @@ library(tools)
 options(shiny.maxRequestSize = 15*1024^2)
 
 # Define UI for data upload app ----
-ui <- fluidPage(theme = shinytheme("cerulean"),
+ui <- fluidPage(theme = shinytheme("darkly"),
+                
                 
                 #Styling Error Message
                 tags$head(
@@ -31,7 +32,7 @@ ui <- fluidPage(theme = shinytheme("cerulean"),
                 sidebarLayout(
                   
                   # Sidebar panel for inputs ----
-                  sidebarPanel(
+                  sidebarPanel(style = "color : orange",
                     # Input: Select a file ----
                     fileInput("file1", "Choose CSV File From Valid EmotiVis Affectiva Trial",
                               multiple = TRUE,
@@ -54,12 +55,15 @@ ui <- fluidPage(theme = shinytheme("cerulean"),
                     # Horizontal line ----
                     tags$hr(),
                     
-                    # Input: Select number of rows to display ----
-                    radioButtons("disp", "Display",
-                                 choices = c(All = "all",
-                                             head = "head"),
-                                 #Defaut to displaying all data in table
-                                 selected = "all") 
+                    #Download Plot
+                    downloadButton('downloadPlot', 'Download Plot')
+                    
+                    # # Input: Select number of rows to display ----
+                    # radioButtons("disp", "Display",
+                    #              choices = c(All = "all",
+                    #                          head = "head"),
+                    #              #Defaut to displaying all data in table
+                    #              selected = "all") 
                     ),
                   
                   # Main panel for displaying outputs ----
@@ -85,7 +89,7 @@ ui <- fluidPage(theme = shinytheme("cerulean"),
 server <- function(input, output) {
   
   #Read in CSV Data
-  plotdata <- reactive({
+  plotdata <- function()({
     req(input$file1)
     validate(
       need(file_ext(input$file1$name) %in% c(
@@ -126,12 +130,13 @@ server <- function(input, output) {
   ##########################################NEWPLOT##########################################
   #Visualize Table with Option to display desired number of rows of data
   output$table <- renderTable({
-    if(input$disp == "head") {
-      return(head(plotdata()))
-    }
-    else {
-      return(plotdata())
-    }
+    plotdata()
+    # if(input$disp == "head") {
+    #   return(head(plotdata()))
+    # }
+    # else {
+    #   return(plotdata())
+    # }
   })
   
   ##########################################NEWPLOT##########################################  
@@ -337,6 +342,14 @@ server <- function(input, output) {
     
     
   })
+  
+  output$downloadPlot <- downloadHandler(
+    filename = "Shinyplot.png",
+    content = function(file) {
+      png(file)
+      plotdata()
+      dev.off()
+    })    
   
   
 }
