@@ -87,6 +87,10 @@ server <- function(input, output) {
   #Read in CSV Data
   plotdata <- reactive({
     req(input$file1)
+    validate(
+      need(file_ext(input$file1$name) %in% c(
+        'csv'
+      ), "Wrong File Format try again!"))
     read.csv(input$file1$datapath, sep = input$sep, header = TRUE)
   })
   
