@@ -5,85 +5,46 @@ library(plotly)
 library(shinythemes)
 library(tidyverse)
 library(tools)
+library(shinydashboard)
 
 #EmotiVis, Bucknell Senior Design
 
 #Changing Maximum Allowable FileSize to 15MB
 options(shiny.maxRequestSize = 15*1024^2)
 
-# Define UI for data upload app ----
-ui <- fluidPage(theme = shinytheme("darkly"),
-                
-                
-                #Styling Error Message
-                tags$head(
-                  tags$style(HTML("
-                                  .shiny-output-error-validation {
-                                  color: green;
-                                  }
-                                  "))
-                  ),
-                
-                
-                # App title ----
-                titlePanel("EmotiVis App Dashboard"),
-                
-                # Sidebar layout with input and output definitions ----
-                sidebarLayout(
-                  
-                  # Sidebar panel for inputs ----
-                  sidebarPanel(style = "color : orange",
-                    # Input: Select a file ----
-                    fileInput("file1", "Choose CSV File From Valid EmotiVis Affectiva Trial",
+
+ui <- dashboardPage(
+  dashboardHeader(title = "Here's our Page!"),
+  dashboardSidebar(fileInput("file1", "Choose CSV File From Valid EmotiVis Affectiva Trial",
                               multiple = TRUE,
-                              accept = c(".csv")),
-                    
-                    # Horizontal line ----
-                    tags$hr("Displayed is gathered user emotional-response data over the time for which the specific Affectiva trial run.
+                             accept = c(".csv")),
+                   tags$hr("Displayed is gathered user emotional-response data over the time for which the specific Affectiva trial run.
                             Values are scaled from -100 to 100, with 100 being the highest measured response for the given emotion."),
-                    # Horizontal line ----
-                    tags$hr(),
-                    # Input: Select separator ----
-                    radioButtons("sep", "Separator",
-                                 choices = c(Comma = ",",
-                                             Semicolon = ";",
-                                             Tab = "\t"),
-                                 selected = ","), 
-                    
-                    
-                    
-                    # Horizontal line ----
-                    tags$hr(),
-                    
-                    #Download Plot
-                    downloadButton('downloadPlot', 'Download Plot')
-                    
-                    # # Input: Select number of rows to display ----
-                    # radioButtons("disp", "Display",
-                    #              choices = c(All = "all",
-                    #                          head = "head"),
-                    #              #Defaut to displaying all data in table
-                    #              selected = "all") 
-                    ),
-                  
-                  # Main panel for displaying outputs ----
-                  mainPanel(
-                    tabsetPanel(
-                      tabPanel("Plot",
-                               plotlyOutput("timeSeries"), 
-                               plotOutput("summary"),
-                               plotlyOutput("avg"),
-                               #plotOutput("test"),
-                               plotOutput("boxplot"),
-                               tableOutput("table"),
-                               plotlyOutput("gauge"), 
-                               uiOutput("slider"))
-                    )
-                    
-                  )
-                  
-                )
+                   radioButtons("sep", "Separator",
+                                choices = c(Comma = ",",
+                                            Semicolon = ";",
+                                            Tab = "\t"),
+                                selected = ",")
+                   ),
+  dashboardBody(
+    fluidRow(
+      box(plotOutput("summary"), width = 4),
+      box(plotlyOutput("avg"), width = 6 )
+    ),
+    fluidRow(
+      box(plotOutput("boxplot")),
+      box(tableOutput("table"))
+    ),
+    fluidRow(
+      box(plotlyOutput("gauge"), 
+          uiOutput("slider")),
+      box(uiOutput("select1"), 
+          uiOutput("select2"), 
+          plotlyOutput("scatter"))
+    )
+  )
 )
+
 
 # Define server logic to read selected file ----
 server <- function(input, output) {
@@ -348,14 +309,81 @@ server <- function(input, output) {
     
   })
   
+  
+  ##########################################NEWPLOT##########################################
+  #Scatter Plot
+  
+  
+  output$select1 <- renderUI({
+    selectInput("inSelect1", 
+                "Select One", 
+                c("Joy" = "joy", 
+                  "Sadness" = "sadness",
+                  "Disgust" = "disgust",
+                  "Contempt" = "contempt",
+                  "Anger" = "anger",
+                  "Fear" = "fear",
+                  "Surprise" = "surprise")
+    ) 
+  })
+  
+  getAns <- function(potA){
+    emo = plotdata()
+    ans <- switch(potA,
+                  "joy" = emo$emotions_joy,
+                  "sadness" = emo$emotions_sadness,
+                  "disgust" = emo$emotions_disgust,
+                  "contempt" = emo$emotions_contempt,
+                  "anger" = emo$emotions_anger,
+                  "fear" = emo$emotions_fear,
+                  "surprise" = emo$emotions_surprise
+    )
+    return(ans)
+  }
+  
+  output$select2 <- renderUI({
+    selectInput("inSelect2", 
+                "Select Another", 
+                choices = c("Joy" = "joy", 
+                            "Sadness" = "sadness",
+                            "Disgust" = "disgust",
+                            "Contempt" = "contempt",
+                            "Anger" = "anger",
+                            "Fear" = "fear",
+                            "Surprise" = "surprise")
+    ) 
+  })
+  
+  
+  output$scatter <- renderPlotly({
+    emo = plotdata()
+    
+    s1 <- input$inSelect1
+    s2 <- input$inSelect2
+    
+    s1Val <- getAns(input$inSelect1)
+    s2Val <- getAns(input$inSelect2)
+    
+    toPlot <- ggplot(emo, aes(x = emo$time, y= emo$emotions_engagement , col= "engagement")) + 
+      geom_point() + 
+      geom_smooth(method = lm, se=FALSE) +
+      geom_point(aes(y= s1Val, col = s1)) +
+      geom_point(aes(y= s2Val, col = s2))
+    
+    
+    ggplotly(toPlot)
+  })
+  
+  
+  
+  
   output$downloadPlot <- downloadHandler(
     filename = "Shinyplot.png",
     content = function(file) {
       png(file)
       plotdata()
       dev.off()
-    })    
-  
+    })  
   
 }
 
