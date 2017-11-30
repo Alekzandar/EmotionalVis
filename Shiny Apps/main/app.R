@@ -3,75 +3,62 @@ library(devtools)
 library(ggplot2)
 library(plotly)
 library(shinythemes)
+library(tidyverse)
+library(tools)
+library(shinydashboard)
 
 #EmotiVis, Bucknell Senior Design
 
-# Define UI for data upload app ----
-ui <- fluidPage(theme = shinytheme("cerulean"),
-                
-                # App title ----
-                titlePanel("Uploading Files"),
-                
-                # Sidebar layout with input and output definitions ----
-                sidebarLayout(
-                  
-                  # Sidebar panel for inputs ----
-                  sidebarPanel(
-                    # Input: Select a file ----
-                    fileInput("file1", "Choose CSV File From Valid EmotiVis Affectiva Trial",
+#Changing Maximum Allowable FileSize to 15MB
+options(shiny.maxRequestSize = 15*1024^2)
+
+
+ui <- dashboardPage(
+  dashboardHeader(title = "Learn about your data!"),
+  dashboardSidebar(fileInput("file1", "Choose CSV File From Valid EmotiVis Affectiva Trial",
                               multiple = TRUE,
-                              accept = c("text/csv",
-                                         "text/comma-separated-values,text/plain",
-                                         ".csv")),
-                    
-                    # Horizontal line ----
-                    tags$hr("Displayed is gathered user emotional-response data over the time for which the specific Affectiva trial run.
+                             accept = c(".csv")),
+                   tags$hr("Displayed is gathered user emotional-response data over the time for which the specific Affectiva trial run.
                             Values are scaled from -100 to 100, with 100 being the highest measured response for the given emotion."),
-                    # Horizontal line ----
-                    tags$hr(),
-                    # Input: Select separator ----
-                    radioButtons("sep", "Separator",
-                                 choices = c(Comma = ",",
-                                             Semicolon = ";",
-                                             Tab = "\t"),
-                                 selected = ","), 
-                    
-                    
-                    
-                    # Horizontal line ----
-                    tags$hr(),
-                    
-                    # Input: Select number of rows to display ----
-                    radioButtons("disp", "Display",
-                                 choices = c(All = "all",
-                                             head = "head"),
-                                 #Defaut to displaying all data in table
-                                 selected = "all") 
-                    ),
-                  
-                  # Main panel for displaying outputs ----
-                  mainPanel(
-                    tabsetPanel(
-                      tabPanel("Plot",  plotlyOutput("timeSeries")), 
-                      tabPanel("Summary", plotOutput("summary")),
-                      tabPanel("Emotional Averages", plotlyOutput("avg")),
-                      tabPanel("Testing New", plotOutput("test")),
-                      tabPanel("Violin plot", plotOutput("violin")),
-                      tabPanel("Table", tableOutput("table")),
-                      tabPanel("Gauge Plot", plotlyOutput("gauge"), uiOutput("slider"))
-                    )
-                    
-                  )
-                  
-                )
+                   radioButtons("sep", "Separator",
+                                choices = c(Comma = ",",
+                                            Semicolon = ";",
+                                            Tab = "\t"),
+                                selected = ",")
+                   ),
+  dashboardBody(
+    fluidRow(
+      box(title="Summary of all your emotional response data",
+          plotOutput("summary"), width = 6),
+      box(plotlyOutput("avg"), width = 6 )
+    ),
+    fluidRow(
+      box(title="Distribution of data by emotion",
+          plotOutput("boxplot")),
+      box(tableOutput("table"))
+    ),
+    fluidRow(
+      box(title="Amount of user engagement at \n different time intervals", 
+          plotlyOutput("gauge"), 
+          uiOutput("slider")),
+      box(uiOutput("select1"), 
+          uiOutput("select2"), 
+          plotlyOutput("scatter"))
+    )
+  )
 )
+
 
 # Define server logic to read selected file ----
 server <- function(input, output) {
   
   #Read in CSV Data
-  plotdata <- reactive({
+  plotdata <- function()({
     req(input$file1)
+    validate(
+      need(file_ext(input$file1$name) %in% c(
+        'csv'
+      ), "Wrong File Format try again!"))
     read.csv(input$file1$datapath, sep = input$sep, header = TRUE)
   })
   
@@ -104,34 +91,42 @@ server <- function(input, output) {
     ggplotly(toPlot)
   })
   
-  ##########################################NEWPLOT##########################################
+  ##########################################TABLE##########################################
   #Visualize Table with Option to display desired number of rows of data
   output$table <- renderTable({
-    if(input$disp == "head") {
-      return(head(plotdata()))
-    }
-    else {
-      return(plotdata())
-    }
+    plotdata()
+    # if(input$disp == "head") {
+    #   return(head(plotdata()))
+    # }
+    # else {
+    #   return(plotdata())
+    # }
   })
   
-  ##########################################NEWPLOT##########################################  
   #Visualize Barchart taking means of every emotion column in the CSV
   output$summary <- renderPlot({
     emo = plotdata()
-    #Removing the Time Column for the Purposes of This Plot
-    emo[1] = NULL
-    emo[10] = NULL
+    emots <- c("emotions_joy" = "joy", 
+               "emotions_sadness" = "sadness", 
+               "emotions_disgust" = "disgust", 
+               "emotions_contempt" = "contmept",
+               "emotions_anger" = "anger", 
+               "emotions_fear" = "fear",
+               "emotions_surprise" = "surprise")
+      
+      
+    #only graphing over emotion, so removing engagement, key, valence and time columns 
+    emo$emotions_engagement <- NULL
+    emo$emotions_emotions_valence <- NULL
+    emo$time <- NULL
+    emo$key <- NULL
     
-    
-    
-    ggplot(gather(emo, cols, value), aes(x = value)) +
-      geom_line(stat = "count") + facet_grid(.~cols)
-    # ggplot(stack(emo), aes(x = cols, y = values)) +
-    #   geom_boxplot()
+    sum <- ggplot(gather(emo, cols, value), aes(x= value)) +
+      geom_line(stat = "count") + facet_grid(.~cols, labeller = as_labeller(emots))
+    sum + theme(axis.text.x = element_text(angle = 45, hjust = 1)) 
     
   })
-  ##########################################NEWPLOT##########################################  
+  ##########################################AVERAGE BAR CHART##########################################  
   #Visualize Barchart taking means of every emotion column in the CSV
   output$avg <- renderPlotly({
     emo = plotdata()
@@ -197,20 +192,25 @@ server <- function(input, output) {
     
   })
   
-  # Violin plot 
-  output$violin <- renderPlot({
-    emo = plotdata()
+  ##########################################BOXPLOT##########################################   
+  output$boxplot <- renderPlot({
+    dat <- plotdata()
+    emotions <- c("Joy", "Sadness", "Disgust", "Fear", "Contempt", "Surprise", "Anger")
+    emo_to_color <- c("gold", "steelblue2", "sienna4", "grey69", "pink2", "tan2", "firebrick2")
     
-    ggplot(emo) + geom_violin(aes(x=emo$emotions_joy, y= emotions_valence, fill = "joy")) +
-      geom_violin(aes(y=emo$emotions_sadness, x = emotions_valence, fill = "sadness")) +
-      geom_violin(aes(x=emo$emotions_disgust, y=emotions_valence, fill = "disgust")) +
-      geom_violin(aes(x=emo$emotions_contempt, y = emotions_valence, fill = "contempt")) +
-      geom_violin(aes(x=emo$emotions_fear, y = emotions_valence, fill="fear")) +
-      geom_violin(aes(x=emo$emotions_surprise, y = emotions_valence, fill="surprise")) +
-      geom_violin(aes(x=emo$emotions_engagement, y = emotions_valence, fill="engagement")) +
-      geom_violin(aes(x=emo$emotions_anger, y = emotions_valence, fill = "anger")) + xlab("emotion") + ylab("valence")
+    bp <- ggplot(dat) + geom_boxplot(aes(y =emotions_joy, x= factor("Joy")), color = "gold") + 
+      geom_boxplot(aes(y =emotions_sadness, x= factor("Sadness")), color = "steelblue2") +
+      geom_boxplot(aes(y =emotions_disgust, x= factor("Disgust")), color = "sienna4") + 
+      geom_boxplot(aes(y =emotions_fear, x= factor("Fear")), color = "grey69") +
+      geom_boxplot(aes(y =emotions_contempt, x= factor("Contempt")), color = "pink2") + 
+      geom_boxplot(aes(y =emotions_surprise, x= factor("Surprise")), color = "tan2") + 
+      geom_boxplot(aes(y =emotions_anger, x= factor("Anger")), color = "firebrick2") + 
+      ylab("Mean of each emotion detected") + xlab("Emotion") 
+    bp
+    
     
   })
+  
   output$slider <- renderUI({
     emo = plotdata()
     engageArr <- emo$emotions_engagement 
@@ -276,8 +276,6 @@ server <- function(input, output) {
       showarrow = FALSE,
       text = sliderText)
     
-    
-    
     #currEngagement = emotions_engagement
     #These are the potential paths for engagement....
     #Only need to adjust middle tw values (could be better specified)
@@ -319,6 +317,81 @@ server <- function(input, output) {
     
   })
   
+  
+  ##########################################NEWPLOT##########################################
+  #Scatter Plot
+  
+  
+  output$select1 <- renderUI({
+    selectInput("inSelect1", 
+                "Select One", 
+                c("Joy" = "joy", 
+                  "Sadness" = "sadness",
+                  "Disgust" = "disgust",
+                  "Contempt" = "contempt",
+                  "Anger" = "anger",
+                  "Fear" = "fear",
+                  "Surprise" = "surprise")
+    ) 
+  })
+  
+  getAns <- function(potA){
+    emo = plotdata()
+    ans <- switch(potA,
+                  "joy" = emo$emotions_joy,
+                  "sadness" = emo$emotions_sadness,
+                  "disgust" = emo$emotions_disgust,
+                  "contempt" = emo$emotions_contempt,
+                  "anger" = emo$emotions_anger,
+                  "fear" = emo$emotions_fear,
+                  "surprise" = emo$emotions_surprise
+    )
+    return(ans)
+  }
+  
+  output$select2 <- renderUI({
+    selectInput("inSelect2", 
+                "Select Another", 
+                choices = c("Joy" = "joy", 
+                            "Sadness" = "sadness",
+                            "Disgust" = "disgust",
+                            "Contempt" = "contempt",
+                            "Anger" = "anger",
+                            "Fear" = "fear",
+                            "Surprise" = "surprise")
+    ) 
+  })
+  
+  
+  output$scatter <- renderPlotly({
+    emo = plotdata()
+    
+    s1 <- input$inSelect1
+    s2 <- input$inSelect2
+    
+    s1Val <- getAns(input$inSelect1)
+    s2Val <- getAns(input$inSelect2)
+    
+    toPlot <- ggplot(emo, aes(x = emo$time, y= emo$emotions_engagement , col= "engagement")) + 
+      geom_point() + 
+      geom_smooth(method = lm, se=FALSE) +
+      geom_point(aes(y= s1Val, col = s1)) +
+      geom_point(aes(y= s2Val, col = s2))
+    
+    
+    ggplotly(toPlot)
+  })
+  
+  
+  
+  
+  output$downloadPlot <- downloadHandler(
+    filename = "Shinyplot.png",
+    content = function(file) {
+      png(file)
+      plotdata()
+      dev.off()
+    })  
   
 }
 

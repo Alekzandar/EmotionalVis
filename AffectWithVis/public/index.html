@@ -4,10 +4,8 @@
 <title>Survey</title>
 <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />
-<link rel="shortcut icon" href="favicon.ico" />
 <script src="components/d3js/d3.v3.min.js"></script>
 <script src="experimentr.js"></script>
-
 
 <!-- Libs -->
 <link rel="stylesheet" href="css/bootstrap.min.css">
@@ -69,19 +67,20 @@
 
 <!--import custom CSS-->
 <link rel="stylesheet" href="Affectiva/style.css">
-
 <script src="Affectiva/script.js"></script>
-
-
 <script src="script.js"></script>
-
-<!--<script src="script.js"></script> -->
 
 
 <style>
     * {
         color: #333;
-        font-family: "HelveticaNeue-Light", "Helvetica Neue Light", "Helvetica Neue", Helvetica, Arial, "Lucida Grande", sans-serif;
+        -webkit-transition: all .35s;
+        -moz-transition: all .35s;
+        transition: all .35s; }
+        a:hover, a:focus {
+          color: #222222; }
+        font-family: 'Muli', 'Helvetica', 'Arial', 'sans-serif'; }
+
     }
 
     body {
@@ -108,31 +107,21 @@
     #hit {
         display: none;
     }
-
 </style>
 
-    
-    <!-- "emotion tracking results" container: title & results 
-    <div style="height:10em;"> 
-     height controls the height of the emotion tracking results container
-    	<strong>EMOTION TRACKING RESULTS</strong>
-    	subcontainer that displays the detected emotions 
-    	<div id="results" style="word-wrap:break-word;"></div>
-    </div> -->
-    
 
     <div id="hit" class="container">
 
         <div id="lead">
-        
-        	    
+
+
     		<!-- "detector log msgs" title container -->
     		<div>
         		<strong>DETECTOR LOG MSGS</strong>
     		</div>
 
-    		<div id="logs"></div> 
-        
+    		<div id="logs"></div>
+
            	 <div>
       			<h3>Affectiva JS SDK CameraDetector to track different emotions.</h3>
       			<button id="start" onclick="onStart()">Start</button>
@@ -140,13 +129,13 @@
       			<button id="reset" onclick="onStop(),onDownload()">Reset</button>
       			<!--<button id="download" onclick="onDownload()">Download</button>-->
     		</div>
-        
-            <p>Use the interactive chart below for your analysis. 
+
+            <p>Use the interactive chart below for your analysis.
                 Mouseover any of the lines to obtain a detailed view.</p>
-                
-            <p>Please click "Start" to begin using Affectiva. Spend time with the 
+
+            <p>Please click "Start" to begin using Affectiva. Spend time with the
             visualization, then when you are done, click "Stop" and "Download".</p>
-            
+
         	<div>
 
             	<strong> Click the following button only after you've finished exploring -- you cannot return to this page. </strong>
@@ -173,14 +162,11 @@
                 <div class="bottom-key">
                     <div class="arrow-key right"></div>
                     <!-- <img class="key-image" alt="" src="http://graphics8.nytimes.com/newsgraphics/2014/03/05/state-of-the-economy/2a4c14557ea64150b3274fb8a9982cbc36e0e597/key-arrow-right.png" width="40" height="40" /> -->
-                    Industries at the <b>right</b> of the chart 
+                    Industries at the <b>right</b> of the chart
                     have the highest average pay.
                 </div>
             </div>
             <div class="key-part color-key">
-                <!--       <div class="color-line">
-                        <b>Industry</b>
-                      </div> -->
                 <div class="about-key">
                     How to read this chart
                     <div class="about-tooltip">
@@ -205,14 +191,12 @@
                 </div>
             </div>
         </div>
-        
-
     </div> <!--! end of #container -->
 
 
     <!-- camera container: col-md-8 (child) & affdex_elements (parent selector) -->
-    <div id="affdex_elements" style="width:680px;height:480px;visibility:hidden;"></div> 
-    
+    <div id="affdex_elements" style="width:0px;height:0px;visibility:hidden;"></div>
+
 
 
 <script>
@@ -222,14 +206,12 @@
         'modules/hit.html',
         'modules/debrief.html'
     ]).start();**/
-    
+
     experimentr.sequence([
     	'modules/training.html',
         'modules/hit.html',
         'modules/debrief.html'
     ]).start();
-    
-    
+
+
 </script>
-
-
