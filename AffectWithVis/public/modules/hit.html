@@ -14,30 +14,16 @@
 <script src="https://download.affectiva.com/js/3.2/affdex.js"></script>
 <script src="Affectiva/script.js"> </script>
 </head>
-
-
-  <div>
-  </div>
-  
-
   <script>
   ( function() {
     var data  = {};
-
-
     init();
 
-
     function init() {
-
       experimentr.hideNext();
-
       load255Chart("255chart");
-
       d3.select('#hit').style('display', 'inline');
-
       experimentr.startTimer('exploration');
-
       // "click here when you're finished" on bottom ends it
       d3.select('#finished')
       .on('click', function() { console.log("finished"); validate(); });
@@ -58,7 +44,7 @@
       data.visited_sequence = smData.visited_sequence;
       data.visitedData = smData.visitedData;
       data.visited = visited[0].length;
-      
+
       // Wrap up
       experimentr.addData(data);
       experimentr.endTimer('exploration');
@@ -68,5 +54,3 @@
 
   }());
   </script>
-
-
