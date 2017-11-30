@@ -14,7 +14,7 @@ options(shiny.maxRequestSize = 15*1024^2)
 
 
 ui <- dashboardPage(
-  dashboardHeader(title = "Here's our Page!"),
+  dashboardHeader(title = "Learn about your data!"),
   dashboardSidebar(fileInput("file1", "Choose CSV File From Valid EmotiVis Affectiva Trial",
                               multiple = TRUE,
                              accept = c(".csv")),
@@ -28,15 +28,18 @@ ui <- dashboardPage(
                    ),
   dashboardBody(
     fluidRow(
-      box(plotOutput("summary"), width = 4),
+      box(title="Summary of all your emotional response data",
+          plotOutput("summary"), width = 6),
       box(plotlyOutput("avg"), width = 6 )
     ),
     fluidRow(
-      box(plotOutput("boxplot")),
+      box(title="Distribution of data by emotion",
+          plotOutput("boxplot")),
       box(tableOutput("table"))
     ),
     fluidRow(
-      box(plotlyOutput("gauge"), 
+      box(title="Amount of user engagement at \n different time intervals", 
+          plotlyOutput("gauge"), 
           uiOutput("slider")),
       box(uiOutput("select1"), 
           uiOutput("select2"), 
@@ -100,20 +103,27 @@ server <- function(input, output) {
     # }
   })
   
-  ##########################################FIX THIS##########################################  
   #Visualize Barchart taking means of every emotion column in the CSV
   output$summary <- renderPlot({
     emo = plotdata()
-    #Removing the Time Column for the Purposes of This Plot
-    emo[1] = NULL
-    emo[10] = NULL
+    emots <- c("emotions_joy" = "joy", 
+               "emotions_sadness" = "sadness", 
+               "emotions_disgust" = "disgust", 
+               "emotions_contempt" = "contmept",
+               "emotions_anger" = "anger", 
+               "emotions_fear" = "fear",
+               "emotions_surprise" = "surprise")
+      
+      
+    #only graphing over emotion, so removing engagement, key, valence and time columns 
+    emo$emotions_engagement <- NULL
+    emo$emotions_emotions_valence <- NULL
+    emo$time <- NULL
+    emo$key <- NULL
     
-    
-    
-    ggplot(gather(emo, cols, value), aes(x = value)) +
-      geom_line(stat = "count") + facet_grid(.~cols)
-    # ggplot(stack(emo), aes(x = cols, y = values)) +
-    #   geom_boxplot()
+    sum <- ggplot(gather(emo, cols, value), aes(x= value)) +
+      geom_line(stat = "count") + facet_grid(.~cols, labeller = as_labeller(emots))
+    sum + theme(axis.text.x = element_text(angle = 45, hjust = 1)) 
     
   })
   ##########################################AVERAGE BAR CHART##########################################  
@@ -265,8 +275,6 @@ server <- function(input, output) {
       y = 0.45,
       showarrow = FALSE,
       text = sliderText)
-    
-    
     
     #currEngagement = emotions_engagement
     #These are the potential paths for engagement....
