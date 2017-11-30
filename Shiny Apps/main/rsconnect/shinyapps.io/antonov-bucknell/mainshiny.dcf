@@ -5,8 +5,8 @@ account: antonov-bucknell
 server: shinyapps.io
 hostUrl: https://api.shinyapps.io/v1
 appId: 229112
-bundleId: 1072608
+bundleId: 1104905
 url: https://antonov-bucknell.shinyapps.io/mainshiny/
-when: 1510572253.80599
+when: 1511986703.54791
 asMultiple: FALSE
 asStatic: FALSE

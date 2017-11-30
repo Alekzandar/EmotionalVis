@@ -3,26 +3,40 @@ library(devtools)
 library(ggplot2)
 library(plotly)
 library(shinythemes)
+library(tidyverse)
+library(tools)
 
 #EmotiVis, Bucknell Senior Design
 
+#Changing Maximum Allowable FileSize to 15MB
+options(shiny.maxRequestSize = 15*1024^2)
+
 # Define UI for data upload app ----
-ui <- fluidPage(theme = shinytheme("cerulean"),
+ui <- fluidPage(theme = shinytheme("darkly"),
+                
+                
+                #Styling Error Message
+                tags$head(
+                  tags$style(HTML("
+                                  .shiny-output-error-validation {
+                                  color: green;
+                                  }
+                                  "))
+                  ),
+                
                 
                 # App title ----
-                titlePanel("Uploading Files"),
+                titlePanel("EmotiVis App Dashboard"),
                 
                 # Sidebar layout with input and output definitions ----
                 sidebarLayout(
                   
                   # Sidebar panel for inputs ----
-                  sidebarPanel(
+                  sidebarPanel(style = "color : orange",
                     # Input: Select a file ----
                     fileInput("file1", "Choose CSV File From Valid EmotiVis Affectiva Trial",
                               multiple = TRUE,
-                              accept = c("text/csv",
-                                         "text/comma-separated-values,text/plain",
-                                         ".csv")),
+                              accept = c(".csv")),
                     
                     # Horizontal line ----
                     tags$hr("Displayed is gathered user emotional-response data over the time for which the specific Affectiva trial run.
@@ -41,24 +55,29 @@ ui <- fluidPage(theme = shinytheme("cerulean"),
                     # Horizontal line ----
                     tags$hr(),
                     
-                    # Input: Select number of rows to display ----
-                    radioButtons("disp", "Display",
-                                 choices = c(All = "all",
-                                             head = "head"),
-                                 #Defaut to displaying all data in table
-                                 selected = "all") 
+                    #Download Plot
+                    downloadButton('downloadPlot', 'Download Plot')
+                    
+                    # # Input: Select number of rows to display ----
+                    # radioButtons("disp", "Display",
+                    #              choices = c(All = "all",
+                    #                          head = "head"),
+                    #              #Defaut to displaying all data in table
+                    #              selected = "all") 
                     ),
                   
                   # Main panel for displaying outputs ----
                   mainPanel(
                     tabsetPanel(
-                      tabPanel("Plot",  plotlyOutput("timeSeries")), 
-                      tabPanel("Summary", plotOutput("summary")),
-                      tabPanel("Emotional Averages", plotlyOutput("avg")),
-                      tabPanel("Testing New", plotOutput("test")),
-                      tabPanel("Violin plot", plotOutput("violin")),
-                      tabPanel("Table", tableOutput("table")),
-                      tabPanel("Gauge Plot", plotlyOutput("gauge"), uiOutput("slider"))
+                      tabPanel("Plot",
+                               plotlyOutput("timeSeries"), 
+                               plotOutput("summary"),
+                               plotlyOutput("avg"),
+                               #plotOutput("test"),
+                               plotOutput("boxplot"),
+                               tableOutput("table"),
+                               plotlyOutput("gauge"), 
+                               uiOutput("slider"))
                     )
                     
                   )
@@ -70,8 +89,12 @@ ui <- fluidPage(theme = shinytheme("cerulean"),
 server <- function(input, output) {
   
   #Read in CSV Data
-  plotdata <- reactive({
+  plotdata <- function()({
     req(input$file1)
+    validate(
+      need(file_ext(input$file1$name) %in% c(
+        'csv'
+      ), "Wrong File Format try again!"))
     read.csv(input$file1$datapath, sep = input$sep, header = TRUE)
   })
   
@@ -104,18 +127,19 @@ server <- function(input, output) {
     ggplotly(toPlot)
   })
   
-  ##########################################NEWPLOT##########################################
+  ##########################################TABLE##########################################
   #Visualize Table with Option to display desired number of rows of data
   output$table <- renderTable({
-    if(input$disp == "head") {
-      return(head(plotdata()))
-    }
-    else {
-      return(plotdata())
-    }
+    plotdata()
+    # if(input$disp == "head") {
+    #   return(head(plotdata()))
+    # }
+    # else {
+    #   return(plotdata())
+    # }
   })
   
-  ##########################################NEWPLOT##########################################  
+  ##########################################FIX THIS##########################################  
   #Visualize Barchart taking means of every emotion column in the CSV
   output$summary <- renderPlot({
     emo = plotdata()
@@ -131,7 +155,7 @@ server <- function(input, output) {
     #   geom_boxplot()
     
   })
-  ##########################################NEWPLOT##########################################  
+  ##########################################AVERAGE BAR CHART##########################################  
   #Visualize Barchart taking means of every emotion column in the CSV
   output$avg <- renderPlotly({
     emo = plotdata()
@@ -197,20 +221,25 @@ server <- function(input, output) {
     
   })
   
-  # Violin plot 
-  output$violin <- renderPlot({
-    emo = plotdata()
+  ##########################################BOXPLOT##########################################   
+  output$boxplot <- renderPlot({
+    dat <- plotdata()
+    emotions <- c("Joy", "Sadness", "Disgust", "Fear", "Contempt", "Surprise", "Anger")
+    emo_to_color <- c("gold", "steelblue2", "sienna4", "grey69", "pink2", "tan2", "firebrick2")
     
-    ggplot(emo) + geom_violin(aes(x=emo$emotions_joy, y= emotions_valence, fill = "joy")) +
-      geom_violin(aes(y=emo$emotions_sadness, x = emotions_valence, fill = "sadness")) +
-      geom_violin(aes(x=emo$emotions_disgust, y=emotions_valence, fill = "disgust")) +
-      geom_violin(aes(x=emo$emotions_contempt, y = emotions_valence, fill = "contempt")) +
-      geom_violin(aes(x=emo$emotions_fear, y = emotions_valence, fill="fear")) +
-      geom_violin(aes(x=emo$emotions_surprise, y = emotions_valence, fill="surprise")) +
-      geom_violin(aes(x=emo$emotions_engagement, y = emotions_valence, fill="engagement")) +
-      geom_violin(aes(x=emo$emotions_anger, y = emotions_valence, fill = "anger")) + xlab("emotion") + ylab("valence")
+    bp <- ggplot(dat) + geom_boxplot(aes(y =emotions_joy, x= factor("Joy")), color = "gold") + 
+      geom_boxplot(aes(y =emotions_sadness, x= factor("Sadness")), color = "steelblue2") +
+      geom_boxplot(aes(y =emotions_disgust, x= factor("Disgust")), color = "sienna4") + 
+      geom_boxplot(aes(y =emotions_fear, x= factor("Fear")), color = "grey69") +
+      geom_boxplot(aes(y =emotions_contempt, x= factor("Contempt")), color = "pink2") + 
+      geom_boxplot(aes(y =emotions_surprise, x= factor("Surprise")), color = "tan2") + 
+      geom_boxplot(aes(y =emotions_anger, x= factor("Anger")), color = "firebrick2") + 
+      ylab("Mean of each emotion detected") + xlab("Emotion") 
+    bp
+    
     
   })
+  
   output$slider <- renderUI({
     emo = plotdata()
     engageArr <- emo$emotions_engagement 
@@ -318,6 +347,14 @@ server <- function(input, output) {
     
     
   })
+  
+  output$downloadPlot <- downloadHandler(
+    filename = "Shinyplot.png",
+    content = function(file) {
+      png(file)
+      plotdata()
+      dev.off()
+    })    
   
   
 }
