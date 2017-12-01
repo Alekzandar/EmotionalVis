@@ -19,12 +19,12 @@ ui <- dashboardPage(
                               multiple = TRUE,
                              accept = c(".csv")),
                    tags$hr("Displayed is gathered user emotional-response data over the time for which the specific Affectiva trial run.
-                            Values are scaled from -100 to 100, with 100 being the highest measured response for the given emotion."),
-                   radioButtons("sep", "Separator",
-                                choices = c(Comma = ",",
-                                            Semicolon = ";",
-                                            Tab = "\t"),
-                                selected = ",")
+                            Values are scaled from 0 to 100, with 100 being the highest measured response for the given emotion.")
+                   # radioButtons("sep", "Separator",
+                   #              choices = c(Comma = ",",
+                   #                          Semicolon = ";",
+                   #                          Tab = "\t"),
+                   #              selected = ",")
                    ),
   dashboardBody(
     fluidRow(
@@ -59,7 +59,7 @@ server <- function(input, output) {
       need(file_ext(input$file1$name) %in% c(
         'csv'
       ), "Wrong File Format try again!"))
-    read.csv(input$file1$datapath, sep = input$sep, header = TRUE)
+    read.csv(input$file1$datapath, header = TRUE)# sep = input$sep, header = TRUE)
   })
   
   
