@@ -19,17 +19,25 @@ ui <- dashboardPage(
                               multiple = TRUE,
                              accept = c(".csv")),
                    tags$hr("Displayed is gathered user emotional-response data over the time for which the specific Affectiva trial run.
-                            Values are scaled from -100 to 100, with 100 being the highest measured response for the given emotion."),
-                   radioButtons("sep", "Separator",
-                                choices = c(Comma = ",",
-                                            Semicolon = ";",
-                                            Tab = "\t"),
-                                selected = ",")
+                            Values are scaled from 0 to 100, with 100 being the highest measured response for the given emotion."),
+                   
+                   # Horizontal line ----
+                   tags$hr(),
+                   # Input: Select number of rows to display ----
+                   radioButtons("disp", "Data Table Control",
+                                choices = c(All = "all",
+                                            head = "head"),
+                                #Defaut to displaying all data in table
+                                selected = "head"),
+                   # Horizontal line ----
+                   tags$hr("For larger datasets select 'head' to trim the data initially displayed."),
+                   # Horizontal line ----
+                   tags$hr()
                    ),
   dashboardBody(
     fluidRow(
       box(title="Summary of all your emotional response data",
-          plotOutput("summary"), width = 6),
+          plotlyOutput("timeSeries"), width = 6),
       box(plotlyOutput("avg"), width = 6 )
     ),
     fluidRow(
@@ -59,7 +67,7 @@ server <- function(input, output) {
       need(file_ext(input$file1$name) %in% c(
         'csv'
       ), "Wrong File Format try again!"))
-    read.csv(input$file1$datapath, sep = input$sep, header = TRUE)
+    read.csv(input$file1$datapath, header = TRUE)# sep = input$sep, header = TRUE)
   })
   
   
@@ -95,12 +103,12 @@ server <- function(input, output) {
   #Visualize Table with Option to display desired number of rows of data
   output$table <- renderTable({
     plotdata()
-    # if(input$disp == "head") {
-    #   return(head(plotdata()))
-    # }
-    # else {
-    #   return(plotdata())
-    # }
+    if(input$disp == "head") {
+      return(head(plotdata()))
+    }
+    else {
+      return(plotdata())
+    }
   })
   
   #Visualize Barchart taking means of every emotion column in the CSV
@@ -117,13 +125,18 @@ server <- function(input, output) {
       
     #only graphing over emotion, so removing engagement, key, valence and time columns 
     emo$emotions_engagement <- NULL
-    emo$emotions_emotions_valence <- NULL
+    emo$emotions_valence <- NULL
     emo$time <- NULL
     emo$key <- NULL
-    
-    sum <- ggplot(gather(emo, cols, value), aes(x= value)) +
-      geom_line(stat = "count") + facet_grid(.~cols, labeller = as_labeller(emots))
-    sum + theme(axis.text.x = element_text(angle = 45, hjust = 1)) 
+    matplot(emo[, 1], type="l")
+    matplot(emo[, 2], type="l")
+    matplot(emo[, 3], type="l")
+    matplot(emo[, 4], type="l")
+    matplot(emo[, 5], type="l")
+     
+    # sum <- ggplot(gather(emo, cols, value), aes(x= value)) +
+    #   geom_line(stat = "count") + facet_grid(.~cols, labeller = as_labeller(emots))
+    # sum + theme(axis.text.x = element_text(angle = 45, hjust = 1)) 
     
   })
   ##########################################AVERAGE BAR CHART##########################################  
@@ -156,11 +169,12 @@ server <- function(input, output) {
       select(emotion, value, time, key)
     
     #Function generates new barchart for every seperate user detected
-    ggplot(emo2) +
+    myPlot <- ggplot(emo2) +
       geom_bar(aes(x=emotion, y=value, fill=emotion), stat = "identity") +
       facet_wrap(~ key, ncol=2) + 
       labs(title ="Mean Affectiva Emotions Across Participants") +
       theme_bw()
+    myPlot
     
     
   })
@@ -385,12 +399,22 @@ server <- function(input, output) {
   
   
   
-  output$downloadPlot <- downloadHandler(
-    filename = "Shinyplot.png",
-    content = function(file) {
-      png(file)
-      plotdata()
-      dev.off()
+  output$downloadPlot <- downloadHandler({
+    downloadHandler(
+      filename =  function() {
+        paste("boxplot", input$var3, sep=".")
+      },
+      # content is a function with argument file. content writes the plot to the device
+      content = function(file) {
+        if(input$var3 == "png")
+          png(file) # open the png device
+        else
+          pdf(file) # open the pdf device
+        myPlot # draw the plot
+        dev.off()  # turn the device off
+        
+      } 
+    )
     })  
   
 }
